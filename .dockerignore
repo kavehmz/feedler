@@ -1,0 +1,11 @@
+data/
+**/node_modules/
+**/dist/
+**/build/
+backend/static/*
+!backend/static/.gitkeep
+.git/
+.idea/
+.vscode/
+*.md
+!README.md
