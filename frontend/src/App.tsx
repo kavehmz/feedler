@@ -7,11 +7,14 @@ import { ArticleView } from './components/ArticleView'
 import { Toolbar } from './components/Toolbar'
 import { ExportDialog } from './components/ExportDialog'
 import { ImportDialog } from './components/ImportDialog'
+import { SettingsDialog } from './components/SettingsDialog'
+import { useSettings } from './settings'
 
 export function App() {
+  const [settings, updateSettings, resetSettings] = useSettings()
   const [feeds, setFeeds] = useState<FeedsResponse | null>(null)
   const [selection, setSelection] = useState<Selection>({ kind: 'all' })
-  const [filter, setFilter] = useState<FilterKind>('unread')
+  const [filter, setFilter] = useState<FilterKind>(settings.defaultFilter)
   const [search, setSearch] = useState('')
   const [articles, setArticles] = useState<Article[]>([])
   const [total, setTotal] = useState(0)
@@ -20,6 +23,7 @@ export function App() {
   const [refreshing, setRefreshing] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(
     document.documentElement.classList.contains('dark') ? 'dark' : 'light',
   )
@@ -193,6 +197,7 @@ export function App() {
           onRefresh={handleRefreshAll}
           onOpenExport={() => setExportOpen(true)}
           onOpenImport={() => setImportOpen(true)}
+          onOpenSettings={() => setSettingsOpen(true)}
           filter={filter}
           onFilter={setFilter}
           search={search}
@@ -210,6 +215,13 @@ export function App() {
             onSelect={onSelectArticle}
             onToggleStar={handleStar}
             selection={selection}
+            density={settings.density}
+            autoMarkOnScroll={settings.autoMarkOnScroll}
+            autoMarkDelayMs={settings.autoMarkDelayMs}
+            onAutoRead={(id) => {
+              setArticles(prev => prev.map(x => x.id === id ? { ...x, is_read: true } : x))
+              loadFeeds()
+            }}
           />
           <ArticleView
             article={selectedArticle}
@@ -229,6 +241,14 @@ export function App() {
         setImportOpen(false)
         await loadFeeds()
       }} />}
+      {settingsOpen && (
+        <SettingsDialog
+          settings={settings}
+          onChange={updateSettings}
+          onReset={resetSettings}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
     </div>
   )
 }
