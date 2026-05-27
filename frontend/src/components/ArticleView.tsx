@@ -69,7 +69,7 @@ export function ArticleView({ article, onToggleStar, onToggleRead }: Props) {
           <div className="text-5xl mb-2">📖</div>
           <div className="text-sm">Select an article from the list</div>
           <div className="text-xs mt-3 text-ink-400">
-            <kbd>j</kbd>/<kbd>k</kbd> to navigate · <kbd>m</kbd> toggle read · <kbd>s</kbd> star · <kbd>o</kbd> open original · <kbd>r</kbd> refresh · <kbd>e</kbd> export · <kbd>/</kbd> search
+            Press <kbd className="px-1 py-0.5 rounded border border-ink-300 dark:border-ink-700">?</kbd> for keyboard shortcuts
           </div>
         </div>
       </div>

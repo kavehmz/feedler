@@ -61,9 +61,9 @@ export function Toolbar(p: Props) {
       <button
         className="px-2.5 py-1.5 rounded-md text-sm hover:bg-ink-100 dark:hover:bg-ink-800"
         onClick={p.onMarkAllRead}
-        title="Mark all visible articles as read"
+        title="Mark all as read in the current view (Shift+M)"
       >
-        ✓ Read all
+        ✓ Mark all read
       </button>
       <button
         className="px-2.5 py-1.5 rounded-md text-sm hover:bg-ink-100 dark:hover:bg-ink-800"

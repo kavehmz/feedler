@@ -8,6 +8,7 @@ import { Toolbar } from './components/Toolbar'
 import { ExportDialog } from './components/ExportDialog'
 import { ImportDialog } from './components/ImportDialog'
 import { SettingsDialog } from './components/SettingsDialog'
+import { ShortcutsDialog } from './components/ShortcutsDialog'
 import { useSettings } from './settings'
 
 export function App() {
@@ -24,6 +25,7 @@ export function App() {
   const [exportOpen, setExportOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
   const [theme, setTheme] = useState<'light' | 'dark'>(
     document.documentElement.classList.contains('dark') ? 'dark' : 'light',
   )
@@ -155,6 +157,10 @@ export function App() {
       } else if (e.key === 's' && selectedId != null) {
         e.preventDefault()
         handleStar(selectedId)
+      } else if (e.key === 'M') {
+        // Shift+M — mark all in current scope as read
+        e.preventDefault()
+        handleMarkAllRead()
       } else if (e.key === 'm' && selectedId != null) {
         e.preventDefault()
         const a = articles.find(x => x.id === selectedId)
@@ -168,11 +174,14 @@ export function App() {
       } else if (e.key === '/') {
         e.preventDefault()
         document.getElementById('search-input')?.focus()
+      } else if (e.key === '?') {
+        e.preventDefault()
+        setShortcutsOpen(true)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [articles, selectedId, onSelectArticle, handleRefreshAll, handleStar, handleToggleRead])
+  }, [articles, selectedId, onSelectArticle, handleRefreshAll, handleStar, handleToggleRead, handleMarkAllRead])
 
   const selectedArticle = useMemo(
     () => articles.find(a => a.id === selectedId) || null,
@@ -249,6 +258,7 @@ export function App() {
           onClose={() => setSettingsOpen(false)}
         />
       )}
+      {shortcutsOpen && <ShortcutsDialog onClose={() => setShortcutsOpen(false)} />}
     </div>
   )
 }
