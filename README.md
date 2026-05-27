@@ -1,7 +1,25 @@
 # Feedler
 
-A self-hosted RSS/Atom feed reader. Single Go binary with an embedded React
-frontend, one port, one `docker compose up`.
+A self-hosted RSS/Atom reader built around one idea: **triage your feeds here,
+then export your reads as Markdown and hand them to an AI.** Rather than bolting
+a chatbot onto the reader, Feedler lets you export *Today* / *This Week* (or any
+range/folder/feed) as clean Markdown — with a link back to the **original
+article** *and* a link to the item **in Feedler** — to drop into Claude, ChatGPT,
+or any LLM for summarizing, clustering, and triage.
+
+Single Go binary with an embedded React frontend, one port, one `docker compose up`.
+
+### The point: export your reads for an AI
+
+![Export to Markdown — a date/scope-scoped digest with source + in-reader links, ready to paste into an LLM](docs/screenshot-export.png)
+
+### A fast, keyboard-driven reader to get you there
+
+![Feedler — three-pane reader: folders, article list, and the reading pane](docs/screenshot.png)
+
+<sub>Light & dark themes · three-pane Reeder-style layout · full-article reading · read-on-scroll.</sub>
+
+![Feedler in dark mode](docs/screenshot-dark.png)
 
 ## Features
 
