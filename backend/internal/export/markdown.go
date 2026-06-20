@@ -16,7 +16,7 @@ type Options struct {
 	To       *time.Time
 	Filter   string // "all" | "read" | "unread" | "starred"
 	GroupBy  string // "feed" | "chrono"
-	BaseURL  string // e.g. http://localhost:8080  (used for "in reader" links)
+	BaseURL  string // e.g. http://localhost:8473  (used for "in reader" links)
 	WithBody bool   // include summary excerpt
 	FeedID   *int64 // narrow to one feed
 	Folder   string // narrow to one folder

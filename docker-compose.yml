@@ -7,7 +7,7 @@ services:
     container_name: feedler
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8473:8473"
     volumes:
       # SQLite database + WAL files live here, survives rebuilds.
       - ./data:/data
@@ -15,10 +15,10 @@ services:
       # so the file you see on disk is the same one the container reads.
       - ./Feeds.opml:/seed/Feeds.opml:ro
     environment:
-      FEEDLER_PUBLIC_BASE_URL: "http://localhost:8080"
+      FEEDLER_PUBLIC_BASE_URL: "http://localhost:8473"
       FEEDLER_REFRESH_INTERVAL_MINUTES: "30"
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8473/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3

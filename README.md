@@ -24,7 +24,7 @@ Single Go binary with an embedded React frontend, one port, one `docker compose 
 ## Features
 
 - **Web-based**, three-pane Reeder-style UI (folders → list → reader)
-- **Single port** (8080) — Go serves the API *and* the bundled React app
+- **Single port** (8473) — Go serves the API *and* the bundled React app
 - **Single container** brought up by `docker compose up`
 - **No auth** — local single-user
 - **Read / unread / starred** state, per-feed and per-folder unread counts
@@ -45,7 +45,7 @@ Single Go binary with an embedded React frontend, one port, one `docker compose 
 
 ```bash
 docker compose up --build
-# then open http://localhost:8080
+# then open http://localhost:8473
 ```
 
 The first run will:
@@ -66,7 +66,7 @@ LLM with a prompt like:
 Each item in the export looks like:
 
 ```markdown
-- **GPT-5 launches** (_2026-05-26 14:22_) — [source](https://openai.com/...) · [in reader](http://localhost:8080/a/123)
+- **GPT-5 launches** (_2026-05-26 14:22_) — [source](https://openai.com/...) · [in reader](http://localhost:8473/a/123)
   > Short summary excerpt…
 ```
 
@@ -79,11 +79,33 @@ All optional, set in `docker-compose.yml`:
 
 | Var | Default | What |
 |---|---|---|
-| `FEEDLER_PUBLIC_BASE_URL` | `http://localhost:8080` | Used for the "in reader" links in exports |
+| `FEEDLER_PUBLIC_BASE_URL` | `http://localhost:8473` | Used for the "in reader" links in exports |
 | `FEEDLER_REFRESH_INTERVAL_MINUTES` | `30` | Background refresh cadence |
-| `FEEDLER_PORT` | `8080` | HTTP port inside the container |
+| `FEEDLER_PORT` | `8473` | HTTP port inside the container |
 | `FEEDLER_DATA_DIR` | `/data` | SQLite location inside the container |
 | `FEEDLER_SEED_OPML` | `/seed/Feeds.opml` | Imported on first run if present |
+
+## How this was built
+
+Feedler was built end-to-end with Claude Code (Opus 4.7) in a single session —
+a small example of how cheap it now is to build software custom to one person.
+Rough accounting:
+
+| Phase | Est. context | Est. active model time |
+|---|---|---|
+| **Core solution** — Go backend + React frontend + Docker + build/verify, plus feature rounds (feed management, settings, read-on-scroll, keyboard shortcuts, mark-all-read) | ~130–160k tokens | ~25–35 min |
+| README screenshots (an animated-GIF detour, then headless-Chromium PNGs) | ~210–240k tokens | the long tail |
+
+**Takeaway:** producing the README visuals burned *more context than building
+the entire application did.* Visual feedback loops are expensive — every
+screenshot round-trips a full image into context, and the early detour into
+animated GIFs multiplied it. Going straight to headless-Chromium PNGs (or just
+dropping in a hand-taken screenshot) would have cost a fraction. The app itself
+— backend, frontend, Docker, and four feature rounds — was roughly a third of
+the context and about half an hour of model time.
+
+_(Numbers are single-session estimates; only the ~16-minute "core build" mark
+and the total context were directly observed.)_
 
 ## Development
 

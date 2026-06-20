@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"strconv"
@@ -43,7 +44,7 @@ func (s *Server) importOPML(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]any{
 		"inserted": ins, "updated": upd, "skipped": skip,
 	})
-	go func() { _, _ = s.Fetcher.RefreshAll(r.Context()) }()
+	go func() { _, _ = s.Fetcher.RefreshAll(context.Background()) }()
 }
 
 func (s *Server) exportMarkdown(w http.ResponseWriter, r *http.Request) {

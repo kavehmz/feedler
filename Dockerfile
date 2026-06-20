@@ -36,12 +36,14 @@ FROM alpine:3.19
 RUN apk add --no-cache ca-certificates tzdata wget && mkdir -p /data
 
 COPY --from=be /out/feedler /usr/local/bin/feedler
+COPY backend/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 COPY Feeds.opml /seed/Feeds.opml
 
 ENV FEEDLER_DATA_DIR=/data \
     FEEDLER_SEED_OPML=/seed/Feeds.opml \
-    FEEDLER_PORT=8080 \
-    FEEDLER_PUBLIC_BASE_URL=http://localhost:8080 \
+    FEEDLER_PORT=8473 \
+    FEEDLER_PUBLIC_BASE_URL=http://localhost:8473 \
     FEEDLER_REFRESH_INTERVAL_MINUTES=30
 
 # Run as root inside the container. Under rootless Podman the in-container
@@ -49,6 +51,8 @@ ENV FEEDLER_DATA_DIR=/data \
 # files in ./data with no perms gymnastics. Under Docker on Linux you can
 # override with `user:` in docker-compose.yml if you prefer.
 VOLUME /data
-EXPOSE 8080
+EXPOSE 8473
 
-ENTRYPOINT ["/usr/local/bin/feedler"]
+# entrypoint.sh self-heals the SQLite file ownership across rootless-Podman
+# uid-mapping shifts (see the script for the why), then execs feedler.
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

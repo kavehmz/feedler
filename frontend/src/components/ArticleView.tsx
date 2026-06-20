@@ -3,6 +3,17 @@ import DOMPurify from 'dompurify'
 import * as api from '../api'
 import type { Article } from '../types'
 
+// Force every <a> in sanitized article HTML to open in a new tab.
+// Without this, "Article URL", "Comments URL", "Read more at Slashdot",
+// etc. navigate away from Feedler and replace the SPA.
+DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+  if ((node as Element).tagName === 'A') {
+    const a = node as HTMLAnchorElement
+    a.setAttribute('target', '_blank')
+    a.setAttribute('rel', 'noopener noreferrer')
+  }
+})
+
 interface Props {
   article: Article | null
   onToggleStar: (id: number) => void

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"net/http"
@@ -76,8 +77,10 @@ func (s *Server) listFeeds(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) refreshAll(w http.ResponseWriter, r *http.Request) {
+	// Use a fresh background context — r.Context() is cancelled the moment we
+	// return the 202, which would kill the goroutine before it does any work.
 	go func() {
-		_, _ = s.Fetcher.RefreshAll(r.Context())
+		_, _ = s.Fetcher.RefreshAll(context.Background())
 	}()
 	writeJSON(w, 202, map[string]string{"status": "started"})
 }
@@ -152,7 +155,7 @@ func (s *Server) addFeed(w http.ResponseWriter, r *http.Request) {
 			_ = s.DB.QueryRowContext(r.Context(), `SELECT id FROM feeds WHERE xml_url = ?`, body.XMLURL).Scan(&id)
 		}
 		// Kick off a refresh so articles arrive immediately.
-		go func(fid int64) { _, _ = s.Fetcher.RefreshOne(r.Context(), fid) }(id)
+		go func(fid int64) { _, _ = s.Fetcher.RefreshOne(context.Background(), fid) }(id)
 		writeJSON(w, 201, map[string]any{"id": id, "title": body.Title, "folder": body.Folder})
 		return
 	}

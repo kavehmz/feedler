@@ -26,7 +26,7 @@ var embeddedStatic embed.FS
 func main() {
 	dataDir := envOr("FEEDLER_DATA_DIR", "./data")
 	seedOPML := envOr("FEEDLER_SEED_OPML", "")
-	port := envOr("FEEDLER_PORT", "8080")
+	port := envOr("FEEDLER_PORT", "8473")
 	baseURL := envOr("FEEDLER_PUBLIC_BASE_URL", "http://localhost:"+port)
 	refreshMin, _ := strconv.Atoi(envOr("FEEDLER_REFRESH_INTERVAL_MINUTES", "30"))
 	if refreshMin < 1 {
