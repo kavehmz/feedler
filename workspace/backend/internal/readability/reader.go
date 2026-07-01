@@ -4,12 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
 
 	readability "github.com/go-shiori/go-readability"
 )
+
+// maxFullTextBytes caps the full-text page body so a hostile or runaway origin
+// cannot exhaust memory (engineering_standard §6.3: "feed bodies and full-text
+// pages are read through a limited reader"). Mirrors the feed fetcher's cap.
+const maxFullTextBytes = 20 << 20 // 20 MB
 
 type Service struct {
 	DB         *sql.DB
@@ -64,7 +70,7 @@ func (s *Service) Fetch(ctx context.Context, articleID int64) (string, error) {
 		return "", fmt.Errorf("upstream HTTP %d", resp.StatusCode)
 	}
 
-	article, err := readability.FromReader(resp.Body, u)
+	article, err := readability.FromReader(io.LimitReader(resp.Body, maxFullTextBytes), u)
 	if err != nil {
 		return "", err
 	}

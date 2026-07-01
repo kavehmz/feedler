@@ -18,8 +18,8 @@ type Options struct {
 	GroupBy  string // "feed" | "chrono"
 	BaseURL  string // e.g. http://localhost:8473  (used for "in reader" links)
 	WithBody bool   // include summary excerpt
-	FeedID   *int64 // narrow to one feed
-	Folder   string // narrow to one folder
+	FeedID   *int64  // narrow to one feed
+	Folder   *string // narrow to one folder; non-nil "" = the Uncategorized (no-folder) bucket
 }
 
 type row struct {
@@ -66,9 +66,9 @@ func Build(ctx context.Context, db *sql.DB, opts Options) (string, error) {
 		q.WriteString(` AND a.feed_id = ?`)
 		args = append(args, *opts.FeedID)
 	}
-	if opts.Folder != "" {
+	if opts.Folder != nil {
 		q.WriteString(` AND COALESCE(f.folder,'') = ?`)
-		args = append(args, opts.Folder)
+		args = append(args, *opts.Folder)
 	}
 	q.WriteString(` ORDER BY COALESCE(a.published_at, a.fetched_at) DESC`)
 

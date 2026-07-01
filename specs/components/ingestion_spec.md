@@ -147,13 +147,16 @@ Import returns three counts, surfaced by the endpoint as `{ "inserted", "updated
 | `inserted` | Entries that created a **new** Feed row. |
 | `updated` | Entries that matched an existing `xml_url` and updated it. |
 
-**The insert-vs-update split is a best-effort heuristic.** It is derived from SQLite's rows-affected
-signal on the upsert (an update-branch reports more affected rows than a fresh insert); the
-`inserted`/`updated` boundary may therefore be approximate at the margins. What is **exact and
-binding** is the total and the no-duplicate guarantee: `inserted + updated` equals the number of
-entries with a non-empty `xml_url`, `skipped` equals the number with an empty one, and no `xml_url`
-ever yields two rows. A consumer must not treat `inserted`/`updated` as authoritative beyond "feeds
-were imported".
+**The split reflects whether each entry's `xml_url` already existed.** An entry whose `xml_url` is
+not yet stored counts as `inserted`; one that matches an existing feed (updating its display fields)
+counts as `updated`. A consequence is binding: **re-importing the same OPML reports its feeds as
+`updated`, not `inserted`** (Acceptance Criteria). *(Implementer's note: decide new-vs-existing per
+entry — e.g. an existence check on `xml_url` before the upsert — not by the driver's rows-affected
+signal: SQLite reports one row affected for **both** a fresh insert and the `ON CONFLICT … DO UPDATE`
+branch, so rows-affected cannot tell them apart.)* What is additionally **exact and binding** is the
+total and the no-duplicate guarantee: `inserted + updated` equals the number of entries with a
+non-empty `xml_url`, `skipped` equals the number with an empty one, and no `xml_url` ever yields two
+rows.
 
 ---
 
@@ -423,10 +426,14 @@ These are places the implementation does something the spine does not obviously 
   mid-character). The spine says only "length-capped" (`architecture.md` §2), so this is conformant but
   worth confirming the intended unit. *(Builder note: a character-count cap would be a behavior change
   — spec it first if desired.)*
-- **Insert-vs-update counts are heuristic** (§3.2). The total and no-duplicate guarantee are exact; the
-  split is approximate. The API contract (`api_contract.md` §6) presents `inserted`/`updated` as plain
-  integers without promising precision, so this is consistent — flagged only so consumers do not
-  over-trust the split.
+- **Insert-vs-update counts (resolved).** Earlier revisions of §3.2 described the split as a
+  best-effort heuristic derived from the upsert's rows-affected signal. That signal does **not** work
+  on SQLite (it reports one row for both insert and update), which silently made every import — even a
+  pure re-import — report `inserted`, contradicting the Acceptance Criteria. §3.2 now binds the
+  behavior (re-import reports `updated`) and the implementation decides new-vs-existing per entry
+  (existence check), so the split is exact. *Corrected during a `develop` reconciliation — the prior
+  spec text prescribed a mechanism that does not hold on the chosen stack (`start.md` §0: transcribed,
+  and here incorrect, HOW is a defect).* 
 
 ---
 
@@ -472,7 +479,8 @@ These are places the implementation does something the spine does not obviously 
       title = first non-empty of title/text/xmlUrl; Folder flattened to `"Parent / Child"` with the
       feed's own title excluded (§2, worked example §2.3).
 - [ ] OPML import: upsert by `xml_url` (no duplicates, invariant 1); returns `{inserted, updated,
-      skipped}` with `skipped` = empty-`xml_url` entries and the documented heuristic split (§3).
+      skipped}` with `skipped` = empty-`xml_url` entries and an exact insert/update split — a
+      re-import of the same feeds reports them as `updated`, not `inserted` (§3).
 - [ ] First-run seed: gated by the `seeded` Meta key; present file → import once + set `seeded`;
       missing file → log + skip without setting the flag; unset env → no seed (§4).
 - [ ] Fetcher conditional GET: `User-Agent` + feed `Accept`; `If-None-Match`/`If-Modified-Since` from

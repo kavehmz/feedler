@@ -66,9 +66,13 @@ func (s *Server) exportMarkdown(w http.ResponseWriter, r *http.Request) {
 		WithBody: withBody,
 	}
 
-	// Scope (sidebar selection): folder= or feed=
-	if v := q.Get("folder"); v != "" {
-		opts.Folder = v
+	// Scope (sidebar selection): folder= or feed=. A PRESENT folder param —
+	// even empty — is a folder scope; folder="" selects the Uncategorized
+	// (no-folder) bucket (export_spec §5.1, api_contract §6). An ABSENT folder
+	// param means no folder narrowing.
+	if q.Has("folder") {
+		v := q.Get("folder")
+		opts.Folder = &v
 	}
 	if v := q.Get("feed"); v != "" {
 		if id, err := strconv.ParseInt(v, 10, 64); err == nil {

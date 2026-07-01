@@ -31,7 +31,11 @@ func (s *Server) listArticles(w http.ResponseWriter, r *http.Request) {
 		conds = append(conds, "a.feed_id = ?")
 		args = append(args, feedID)
 	}
-	if folder != "" {
+	// A PRESENT folder param — even empty — narrows to that folder; folder=""
+	// matches the Uncategorized (no-folder) feeds (api_contract §5). An ABSENT
+	// folder param means no folder narrowing. q.Get can't distinguish the two,
+	// so key on presence via q.Has.
+	if q.Has("folder") {
 		conds = append(conds, "COALESCE(f.folder,'') = ?")
 		args = append(args, folder)
 	}

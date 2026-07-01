@@ -30,12 +30,17 @@ export function ArticleList({
   const pendingTimers = useRef<Record<number, number>>({})
   const alreadyMarked = useRef<Set<number>>(new Set())
 
-  // Reset markers when the article set changes (filter/feed switch)
+  // Reset the at-most-once tracking and pending timers whenever the Selection
+  // OR the article set changes — a filter switch, a search, or a refresh that
+  // replaces the list (reading_spec §6.3.7). Keying on the set's *content*
+  // (ids), not just its length, catches a same-length replacement; a per-row
+  // read-state flip keeps the same ids and correctly does NOT reset.
+  const setKey = articles.map(a => a.id).join(',')
   useEffect(() => {
     alreadyMarked.current = new Set()
     Object.values(pendingTimers.current).forEach(t => clearTimeout(t))
     pendingTimers.current = {}
-  }, [selection, articles.length])
+  }, [selection, setKey])
 
   // Scroll selected row into view
   useEffect(() => {

@@ -32,7 +32,7 @@ func NewRouter(s *Server) http.Handler {
 
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-			writeJSON(w, http.StatusOK, map[string]any{"ok": true, "time": time.Now()})
+			writeJSON(w, http.StatusOK, map[string]any{"ok": true, "time": time.Now().UTC()})
 		})
 
 		r.Get("/feeds", s.listFeeds)

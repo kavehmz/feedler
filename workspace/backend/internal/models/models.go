@@ -17,7 +17,7 @@ type Article struct {
 	ID          int64      `json:"id"`
 	FeedID      int64      `json:"feed_id"`
 	FeedTitle   string     `json:"feed_title,omitempty"`
-	FeedFolder  string     `json:"feed_folder,omitempty"`
+	FeedFolder  string     `json:"feed_folder"`
 	GUID        string     `json:"guid"`
 	Title       string     `json:"title"`
 	Link        string     `json:"link"`

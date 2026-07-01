@@ -97,7 +97,15 @@ func ImportOPML(db *sql.DB, feeds []ImportedFeed) (int, int, int, error) {
 			skipped++
 			continue
 		}
-		res, err := tx.Exec(
+		// Determine insert-vs-update by an existence pre-check inside the txn.
+		// SQLite's RowsAffected() reports 1 for BOTH a fresh insert and the
+		// DO UPDATE branch of an upsert (the "2 rows for an update" signal is a
+		// MySQL convention, not SQLite's), so it cannot distinguish the two —
+		// a pre-check makes the split exact so a re-import correctly reports
+		// `updated`, not `inserted` (ingestion_spec §3.2, acceptance criteria).
+		var exists int
+		_ = tx.QueryRow(`SELECT 1 FROM feeds WHERE xml_url = ?`, f.XMLURL).Scan(&exists)
+		_, err := tx.Exec(
 			`INSERT INTO feeds(xml_url, html_url, title, folder) VALUES(?,?,?,?)
 			 ON CONFLICT(xml_url) DO UPDATE SET
 			   html_url = excluded.html_url,
@@ -108,10 +116,7 @@ func ImportOPML(db *sql.DB, feeds []ImportedFeed) (int, int, int, error) {
 		if err != nil {
 			return 0, 0, 0, err
 		}
-		n, _ := res.RowsAffected()
-		// In SQLite, ON CONFLICT...DO UPDATE returns rows affected as 1 for insert
-		// and 2 for update (with the DO UPDATE branch). We approximate.
-		if n >= 2 {
+		if exists == 1 {
 			updated++
 		} else {
 			inserted++

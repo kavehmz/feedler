@@ -6,12 +6,27 @@ import type {
   RefreshStat,
 } from './types'
 
+// The server's error shape is { "error": "<message>" } (engineering_standard §7).
+// Surface that message verbatim so inline error UIs show "xml_url required" etc.,
+// not a status-prefixed raw JSON blob (feed_management §2.3/§5).
+async function errText(res: Response): Promise<string> {
+  const t = await res.text()
+  try {
+    const b = JSON.parse(t)
+    if (b && typeof b.error === 'string') return b.error
+  } catch { /* not JSON — fall through to the raw text */ }
+  return t || res.statusText
+}
+
 async function j<T>(res: Response): Promise<T> {
-  if (!res.ok) {
-    const t = await res.text()
-    throw new Error(`${res.status}: ${t || res.statusText}`)
-  }
+  if (!res.ok) throw new Error(await errText(res))
   return res.json() as Promise<T>
+}
+
+// The empty folder is shown as "Uncategorized" (a display name, never stored —
+// architecture §2); on the wire that bucket is folder="" (api_contract §5/§6).
+function wireFolder(name: string): string {
+  return name === 'Uncategorized' ? '' : name
 }
 
 export async function getFeeds(): Promise<FeedsResponse> {
@@ -30,7 +45,9 @@ export interface ListArticlesParams {
 export async function listArticles(p: ListArticlesParams): Promise<ArticleListResponse> {
   const qs = new URLSearchParams()
   if (p.feedId != null) qs.set('feed', String(p.feedId))
-  if (p.folder) qs.set('folder', p.folder)
+  // Send folder whenever a folder scope is active — including the empty value
+  // (Uncategorized → folder="") which must not be dropped (api_contract §5).
+  if (p.folder !== undefined) qs.set('folder', wireFolder(p.folder))
   if (p.filter) qs.set('filter', p.filter)
   if (p.search) qs.set('search', p.search)
   if (p.offset != null) qs.set('offset', String(p.offset))
@@ -45,10 +62,7 @@ export async function getArticle(id: number): Promise<Article> {
 // Read-state mutations must confirm server success before the caller flips
 // local state — counts must never lie (reading_spec §5.1/§5.3, vision §5.4).
 async function ok(res: Response): Promise<void> {
-  if (!res.ok) {
-    const t = await res.text()
-    throw new Error(`${res.status}: ${t || res.statusText}`)
-  }
+  if (!res.ok) throw new Error(await errText(res))
 }
 
 export async function markRead(id: number): Promise<void> {
@@ -103,10 +117,15 @@ export async function markAllRead(body: {
   feed_id?: number
   folder?: string
 }): Promise<{ marked: number }> {
+  // Scope precedence feed_id > folder > {} (api_contract §5); map the
+  // Uncategorized display name to the empty wire folder.
+  const b: { feed_id?: number; folder?: string } = {}
+  if (body.feed_id != null) b.feed_id = body.feed_id
+  else if (body.folder !== undefined) b.folder = wireFolder(body.folder)
   return j(await fetch('/api/articles/mark-all-read', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(b),
   }))
 }
 
@@ -136,7 +155,8 @@ export function exportURL(opts: {
   if (opts.group) q.set('group', opts.group)
   if (opts.body === false) q.set('body', '0')
   if (opts.download) q.set('disposition', 'attachment')
-  if (opts.folder) q.set('folder', opts.folder)
+  // Include folder whenever a folder scope is chosen, incl. Uncategorized (→ "").
+  if (opts.folder !== undefined) q.set('folder', wireFolder(opts.folder))
   if (opts.feedId != null) q.set('feed', String(opts.feedId))
   if (opts.tz) q.set('tz', opts.tz)
   return '/api/export?' + q.toString()
