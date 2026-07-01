@@ -39,7 +39,17 @@ export function ArticleView({ article, onToggleStar, onToggleRead }: Props) {
     }
   }, [article?.id])
 
-  const a = serverArticle ?? article
+  // The parent (App) keeps the list row's is_read / is_starred authoritative and
+  // updates it on every toggle (pane control, list star, m/s shortcuts). The
+  // richer server record (content, full_content, author, date) is fetched once
+  // per selected id, so it would otherwise shadow those live-state changes and
+  // leave the pane's read/star controls stale (reading_spec §7.4). Merge: live
+  // read/star from the prop, everything else from the fetched record.
+  const a = article
+    ? (serverArticle
+        ? { ...serverArticle, is_read: article.is_read, is_starred: article.is_starred }
+        : article)
+    : null
 
   const feedHtml = useMemo(() => {
     if (!a) return ''

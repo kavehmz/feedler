@@ -263,11 +263,20 @@ func (f *Fetcher) insertItems(feedID int64, feed *gofeed.Feed) (int, error) {
 		if item.Author != nil {
 			author = item.Author.Name
 		}
+		// Normalize to UTC before storing (architecture §3 invariant 5). gofeed
+		// preserves the source offset (e.g. an RFC822 "… -0700" date parses to a
+		// -0700 time.Time), and the modernc/sqlite driver stores that verbatim as
+		// "…-07:00" text. Since SQLite string-compares TIMESTAMP columns, an
+		// offset-bearing value mis-sorts against the UTC-stored fetched_at /
+		// last_fetched_at, breaking COALESCE(published_at, fetched_at) ordering
+		// (invariant 4) and the export's UTC-bounded date-range filter.
 		var published *time.Time
 		if item.PublishedParsed != nil {
-			published = item.PublishedParsed
+			t := item.PublishedParsed.UTC()
+			published = &t
 		} else if item.UpdatedParsed != nil {
-			published = item.UpdatedParsed
+			t := item.UpdatedParsed.UTC()
+			published = &t
 		}
 		summary := stripTags(item.Description, 800)
 		content := item.Content

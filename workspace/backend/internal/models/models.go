@@ -21,7 +21,7 @@ type Article struct {
 	GUID        string     `json:"guid"`
 	Title       string     `json:"title"`
 	Link        string     `json:"link"`
-	Author      string     `json:"author,omitempty"`
+	Author      string     `json:"author"`
 	Summary     string     `json:"summary,omitempty"`
 	Content     string     `json:"content,omitempty"`
 	FullContent string     `json:"full_content,omitempty"`
