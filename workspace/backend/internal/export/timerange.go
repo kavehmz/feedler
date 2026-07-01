@@ -34,22 +34,26 @@ func Window(rng, from, to string, loc *time.Location, now time.Time) (fromT, toT
 	nowLoc := now.In(loc)
 	startOfToday := time.Date(nowLoc.Year(), nowLoc.Month(), nowLoc.Day(), 0, 0, 0, 0, loc)
 
+	// Every named-range edge is a calendar-day boundary in the operator's zone.
+	// AddDate on an in-loc time.Date value re-normalizes to the correct wall-clock
+	// midnight across any intervening DST transition (export_spec §4.1/§4.2, invariant
+	// 5); a fixed N*24h offset would drift off local midnight twice a year.
 	switch rng {
 	case "today":
 		f := startOfToday
-		t := f.Add(24 * time.Hour)
+		t := startOfToday.AddDate(0, 0, 1)
 		return &f, &t
 	case "yesterday":
+		f := startOfToday.AddDate(0, 0, -1)
 		t := startOfToday
-		f := t.Add(-24 * time.Hour)
 		return &f, &t
 	case "week":
-		f := startOfToday.Add(-6 * 24 * time.Hour)
-		t := startOfToday.Add(24 * time.Hour)
+		f := startOfToday.AddDate(0, 0, -6)
+		t := startOfToday.AddDate(0, 0, 1)
 		return &f, &t
 	case "month":
-		f := startOfToday.Add(-29 * 24 * time.Hour)
-		t := startOfToday.Add(24 * time.Hour)
+		f := startOfToday.AddDate(0, 0, -29)
+		t := startOfToday.AddDate(0, 0, 1)
 		return &f, &t
 	case "all":
 		return nil, nil

@@ -70,29 +70,35 @@ func NewRouter(s *Server) http.Handler {
 // unknown paths so client-side routing works.
 func spaHandler(staticFS fs.FS) http.Handler {
 	fileServer := http.FileServer(http.FS(staticFS))
+	// index.html (and the SPA fallback for any client-side route) is a
+	// non-hashed path, so it must be served no-cache — a new build is picked up
+	// immediately rather than a stale index being cached (engineering_standard §3.3).
+	serveIndex := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache")
+		r2 := r.Clone(r.Context())
+		r2.URL.Path = "/"
+		fileServer.ServeHTTP(w, r2)
+	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Try to open the requested path; if it's a directory or missing, serve index.html.
 		p := strings.TrimPrefix(r.URL.Path, "/")
 		if p == "" {
-			p = "index.html"
+			serveIndex(w, r)
+			return
 		}
 		f, err := staticFS.Open(p)
 		if err != nil {
-			// fallback to index.html
-			r2 := r.Clone(r.Context())
-			r2.URL.Path = "/"
-			fileServer.ServeHTTP(w, r2)
+			serveIndex(w, r) // SPA fallback for unknown/client-side routes
 			return
 		}
 		stat, _ := f.Stat()
 		f.Close()
 		if stat != nil && stat.IsDir() {
-			r2 := r.Clone(r.Context())
-			r2.URL.Path = "/"
-			fileServer.ServeHTTP(w, r2)
+			serveIndex(w, r)
 			return
 		}
-		// Cache-control for built assets (vite hashes filenames in /assets/)
+		// A real asset. Content-hashed built assets (vite emits them under
+		// /assets/) are immutable; other non-hashed real files are no-cache.
 		if strings.HasPrefix(r.URL.Path, "/assets/") {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 		} else {

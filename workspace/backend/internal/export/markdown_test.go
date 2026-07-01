@@ -174,6 +174,38 @@ func TestTimezoneDayBoundary(t *testing.T) {
 	}
 }
 
+// Named-range boundaries are local midnight in the operator's zone even when a
+// DST transition falls inside the window (export_spec §4.1/§4.2, invariant 5). A
+// fixed N*24h offset drifts an hour off midnight across a spring-forward; AddDate
+// keeps the edge on the calendar-day boundary.
+func TestWindow_NamedRange_DSTMidnight(t *testing.T) {
+	berlin, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		t.Skipf("no tzdata for Europe/Berlin: %v", err)
+	}
+	// Berlin springs forward on 2026-03-29 (02:00→03:00). A `week` export on
+	// 2026-04-01 back-dates 6 days to 2026-03-26, crossing that transition.
+	now := time.Date(2026, 4, 1, 12, 0, 0, 0, berlin)
+	from, to := Window("week", "", "", berlin, now)
+	if from == nil || to == nil {
+		t.Fatal("week returned nil bounds")
+	}
+	fl := from.In(berlin)
+	if fl.Hour() != 0 || fl.Minute() != 0 || fl.Second() != 0 {
+		t.Errorf("week lower bound not at local midnight: %s", fl)
+	}
+	if y, m, d := fl.Date(); y != 2026 || m != time.March || d != 26 {
+		t.Errorf("week lower bound date = %04d-%02d-%02d, want 2026-03-26", y, m, d)
+	}
+	tl := to.In(berlin) // upper bound = start of tomorrow, also local midnight
+	if tl.Hour() != 0 || tl.Minute() != 0 || tl.Second() != 0 {
+		t.Errorf("week upper bound not at local midnight: %s", tl)
+	}
+	if y, m, d := tl.Date(); y != 2026 || m != time.April || d != 2 {
+		t.Errorf("week upper bound date = %04d-%02d-%02d, want 2026-04-02", y, m, d)
+	}
+}
+
 var countRe = regexp.MustCompile(`_(\d+) articles`)
 
 func headerCount(t *testing.T, digest string) int {
