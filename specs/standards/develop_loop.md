@@ -12,9 +12,11 @@ moment anything is off. It is the self-driving form of "reconcile the code to th
 doubles as the project's **bar for modifications**: every committed change must cite a binding spec
 clause.
 
-**Runnable implementation (disposable):** `.claude/workflows/develop-loop.js`. That script is HOW; this
-document is the WHAT. A better AI may regenerate the script from this doc; the rules below are the
-contract it must enforce.
+**Runnable form (disposable):** there is **no standing slash command and no stored script** — `start.md`
+is the only entrypoint. When the operator issues `develop-loop <target>` (routed by `start.md` §2), the
+AI executing it reads this document and authors + runs the orchestration on the spot (e.g. as a
+multi-agent workflow). This document is the WHAT; the orchestration is disposable HOW, regenerated from
+here each time. The rules below are the contract that orchestration must enforce.
 
 ---
 
@@ -112,8 +114,10 @@ gets a clear account of what happened and what, if anything, needs their attenti
 - **Prefer a fresh/clean session.** Independence is the point — a Builder that hasn't seen the code
   being written (or the spec being authored) is the honest test of "can the specs alone drive the
   implementation to conformance."
-- Invoke the runnable workflow (`.claude/workflows/develop-loop.js`) — by name (`develop-loop`) or by
-  script path — optionally with `args: { target, maxRounds }` (defaults: `feedler`, `6`).
+- **Invoke it through `start.md`, like any other command** — in a fresh session:
+  `Read specs/start.md. develop-loop <target>` (default target `feedler`; you may cap the rounds, e.g.
+  "max 2 rounds" — default 6). The AI reads this document and runs the loop. There is **no** separate
+  slash command or stored script to invoke.
 - **Prerequisite (binding):** the environment must permit `docker compose *` (build-verify) and the git
   commands the Gate uses — `git status`, `git diff`, `git add`, `git commit`, `git rev-parse`. Without
   the git permissions the loop stalls at the first commit. Nothing else is needed.
@@ -144,7 +148,7 @@ gets a clear account of what happened and what, if anything, needs their attenti
 
 - [ ] This document (`specs/standards/develop_loop.md`) — the durable, normative definition.
 - [ ] `start.md` references the loop (command grammar + boot table) so it is discoverable.
-- [ ] The runnable workflow `.claude/workflows/develop-loop.js` enforces §3's Builder and Gate rules
-      and §3.2's commit conventions.
+- [ ] The orchestration the executing AI runs (authored from this spec on each `develop-loop`
+      invocation via `start.md`) enforces §3's Builder and Gate rules and §3.2's commit conventions.
 - [ ] The git + docker permissions the loop needs are documented (§5) so a clean-session run does not
       stall.
