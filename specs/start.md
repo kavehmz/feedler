@@ -47,6 +47,7 @@ export range` — and you take it from there. This file tells you how.
 | build / Docker / config / deployment | `standards/engineering_standard.md` |
 | the API contract itself | `standards/api_contract.md` (+ `architecture.md` §3 for the data model it reflects) |
 | spec work (`edit specs` / `new …`) | `vision.md` first, then the affected specs and §5 of this file |
+| develop loop / automated convergence | `standards/develop_loop.md` (+ everything a `develop <target>` reads) |
 
 3. Inspect what already exists in the repo for the target (the `workspace/` tree — the implementation
    lives in `workspace/`, mirroring `specs/`) and diff it against the spec — that tells you whether you
@@ -63,6 +64,11 @@ export range` — and you take it from there. This file tells you how.
   should exist at all; if yes, draft `components/<name>_spec.md` in the shape of the existing
   component specs and propose the `architecture.md` §4 component-table row (the cascade). The output
   is a **proposed spec for the operator's confirmation**; building it is a later `develop <name>`.
+- `develop-loop <target>` — the **Develop Loop** (`standards/develop_loop.md`): run `develop <target>` repeatedly
+  in fresh agents with an independent review gate that auto-commits only clean, spec-grounded code
+  changes (short message, no credit) and stops on convergence, a spec change, or anything suspicious.
+  The automated, self-converging form of `develop` + independent verification; best run in a fresh
+  session. It never edits specs and never commits a spec change — those come back to you.
 
 ## 3. The three cases
 

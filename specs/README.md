@@ -31,6 +31,7 @@ specs/
   standards/
     engineering_standard.md      ← stack, single-binary/single-port, build, deploy, config, security
     api_contract.md              ← the full HTTP/JSON wire contract (binding)
+    develop_loop.md              ← automated spec-convergence mode (develop → review → commit loop)
   components/
     ingestion_spec.md            ← OPML seed/import, the fetcher, conditional GET, dedup, scheduler
     feed_management_spec.md      ← add / remove / rename / move feeds, errors + retry, the sidebar
