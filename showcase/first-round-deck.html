@@ -142,6 +142,64 @@
   .chk span{ display:block; color:var(--muted-l); font-size:clamp(.82rem,1.5vw,1rem); margin-top:1px; }
   code.k{ font-family:var(--mono); background:var(--line-l); padding:1px 6px; border-radius:5px; font-size:.86em; }
 
+  /* ---------- file tree ---------- */
+  .tree{ background:#0a1120; border:1px solid #1b2942; border-radius:16px; padding:clamp(18px,3.2vw,32px);
+    font-family:var(--mono); font-size:clamp(.82rem,1.6vw,1.12rem); line-height:1.95; color:#c7d2e0;
+    box-shadow:0 40px 90px -55px rgba(0,0,0,.9); overflow-x:auto; white-space:pre; }
+  .tree .d{ color:var(--accent-lite); font-weight:700; }
+  .tree .f{ color:#eaf0f8; }
+  .tree .c{ color:#647087; }
+
+  /* ---------- flow rail ---------- */
+  .flow{ display:flex; align-items:stretch; justify-content:center; flex-wrap:wrap; gap:10px 2px; margin-top:8px; }
+  .fbox{ flex:1 1 0; min-width:132px; max-width:210px; border:1px solid var(--line-l); background:var(--card);
+    border-radius:13px; padding:15px 12px; text-align:center; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .fbox .n{ font-family:var(--mono); font-weight:700; color:var(--muted-l); font-size:.72rem; letter-spacing:.09em; }
+  .fbox .t{ font-family:var(--serif); font-weight:700; font-size:clamp(1rem,1.6vw,1.28rem); margin-top:5px;
+    letter-spacing:-.01em; color:var(--ink); }
+  .fbox .s{ color:var(--muted-l); font-size:clamp(.72rem,1.2vw,.88rem); margin-top:5px; line-height:1.35; }
+  .fbox.you{ border-color:#f6cfb2; background:linear-gradient(180deg,#fff8f2,#fff); }
+  .fbox.you .n{ color:var(--accent); }
+  .fbox.ship{ border-color:var(--accent-500); background:linear-gradient(180deg,#fff3ea,#fff); }
+  .fbox.ship .t{ color:var(--accent); }
+  .fsep{ flex:none; align-self:center; padding:0 clamp(2px,.8vw,9px); color:var(--accent-lite);
+    font-size:clamp(1.1rem,2.2vw,1.7rem); }
+  .fbranch{ margin-top:20px; display:flex; justify-content:center; }
+  .fbranch .warn{ border:1px dashed var(--accent-500); background:var(--accent-wash); color:var(--accent);
+    border-radius:12px; padding:10px 16px; font-family:var(--mono); font-size:clamp(.76rem,1.35vw,.96rem); }
+
+  /* ---------- loop (a stage set that repeats, not a single pass) ---------- */
+  .loopgrp{ display:flex; flex-direction:column; width:min(720px,92vw); margin:0 auto; }
+  .loopback{ position:relative; height:40px; margin-top:10px; border:2px dashed var(--accent-500);
+    border-top:none; border-radius:0 0 18px 18px; }
+  .loopback::before{ content:"\2191"; position:absolute; left:10px; top:-3px; color:var(--accent-500);
+    font-family:var(--mono); font-weight:700; font-size:1.05rem; line-height:1; }
+  .loopback .lbl{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    background:var(--card); padding:3px 14px; border-radius:999px; font-family:var(--mono);
+    font-size:clamp(.75rem,1.3vw,.95rem); color:var(--accent); white-space:nowrap;
+    box-shadow:0 0 0 1px rgba(249,115,22,.28); }
+  .flowenter,.flowexit{ font-family:var(--mono); font-size:clamp(.82rem,1.45vw,1.02rem); color:var(--muted-l); }
+  .flowenter b,.flowexit b{ font-family:var(--serif); font-weight:700; color:var(--ink); }
+  .down{ color:var(--accent-lite); font-size:1.4rem; line-height:1; }
+
+  /* ---------- circular loop (a true cycle) ---------- */
+  .ring{ position:relative; width:min(620px,94vw); height:min(430px,60vw); margin:2px auto 0; }
+  .ring > svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .rnode{ position:absolute; transform:translate(-50%,-50%); width:min(216px,46vw);
+    border:1px solid var(--line-l); background:linear-gradient(180deg,#ffffff,#f6f9fc); border-radius:16px;
+    padding:15px 14px 14px; text-align:center; box-shadow:0 18px 40px -22px rgba(15,23,42,.6); }
+  .rnode .badge{ position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:30px; height:30px;
+    border-radius:50%; background:var(--accent-500); color:#fff; font-family:var(--mono); font-weight:700;
+    font-size:.9rem; display:grid; place-items:center; box-shadow:0 6px 16px -6px rgba(249,115,22,.85); }
+  .rnode .t{ font-family:var(--serif); font-weight:700; font-size:clamp(1.02rem,1.7vw,1.36rem);
+    color:var(--ink); margin-top:6px; letter-spacing:-.01em; }
+  .rnode .s{ color:var(--muted-l); font-size:clamp(.72rem,1.2vw,.9rem); margin-top:4px; line-height:1.35; }
+  .rnode.ship{ border-color:var(--accent-500); background:linear-gradient(180deg,#fff6ef,#fff); }
+  .rhub{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); text-align:center; }
+  .rhub .sym{ font-family:var(--mono); font-size:clamp(2rem,4.6vw,3.3rem); line-height:1; color:var(--accent); }
+  .rhub .cap{ font-family:var(--mono); font-size:clamp(.72rem,1.2vw,.9rem); color:var(--muted-l);
+    margin-top:6px; letter-spacing:.05em; line-height:1.3; }
+
   /* ---------- HUD ---------- */
   .hud{ position:fixed; left:0; right:0; bottom:0; height:52px; display:flex; align-items:center;
     justify-content:flex-end; gap:14px; padding:0 20px; z-index:50; pointer-events:none; }
@@ -203,21 +261,104 @@
     </div>
   </section>
 
-  <!-- 3 · WHAT IT IS -->
-  <section class="slide light" data-slide>
-    <div class="inner">
-      <p class="eyebrow rise">The target</p>
-      <h2 class="rise" style="--d:.06s">A self-hosted, keyboard-driven feed reader.</h2>
-      <p class="sub rise" style="--d:.16s; max-width:52ch">Its one opinion: <span class="accent-txt">the export.</span> Your day's reads become clean Markdown you paste into any AI — no chatbot bolted into the corner.</p>
-    </div>
-  </section>
-
   <!-- 4 · THE RULE -->
   <section class="slide light warm" data-slide>
     <div class="inner">
       <p class="eyebrow rise">The rule it worked under</p>
       <p class="quote rise" style="--d:.06s">The specs are the asset.<br>The code is <span class="em">disposable.</span></p>
       <p class="sub rise" style="--d:.2s" >12 documents defined <span class="serif-i">what</span> Feedler must do. The AI decided <span class="serif-i">how</span> — free to delete the code and regenerate it, better, from the spec alone.</p>
+    </div>
+  </section>
+
+  <!-- 4A · ONE DOOR (start.md) -->
+  <section class="slide light" data-slide>
+    <div class="inner">
+      <p class="eyebrow rise">How a human drives it</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:30px">Everything goes through one door.</h2>
+      <div class="fan" style="grid-template-columns:auto auto 1fr; gap:clamp(16px,3vw,40px)">
+        <div class="node rise" style="--d:.12s">
+          <div style="font-family:var(--mono); font-weight:700; background:var(--accent); color:#fff; padding:16px 18px; border-radius:14px; line-height:1.3; box-shadow:0 12px 30px -12px rgba(249,115,22,.7)">Read<br>specs/start.md.</div>
+          <div class="cap" style="margin-top:12px">the one entrypoint</div>
+        </div>
+        <div class="arrow rise" style="--d:.2s">&rarr;</div>
+        <div class="node rise" style="--d:.26s; text-align:left">
+          <div class="areas" style="justify-content:flex-start">
+            <span class="chip">develop feedler</span>
+            <span class="chip">develop-loop feedler</span>
+            <span class="chip">&ldquo;make the unread dot brighter&rdquo;</span>
+            <span class="chip">edit specs: &hellip;</span>
+          </div>
+          <div class="cap" style="margin-top:14px; text-align:left">one line — build · reconcile · change · edit the spec</div>
+        </div>
+      </div>
+      <p class="sub rise" style="--d:.36s; max-width:62ch">No dashboards, no side-doors, no slash-commands. The command names the intent; <span class="accent-txt">start.md</span> decides what to do with it.</p>
+    </div>
+  </section>
+
+  <!-- 4B · THE STRUCTURE (file tree) -->
+  <section class="slide light" data-slide>
+    <div class="inner">
+      <p class="eyebrow rise">The asset · plain files in a repo</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:22px">The specs <span class="accent-txt">are</span> the codebase.</h2>
+      <div class="tree rise" style="--d:.12s"><span class="d">specs/</span>  <span class="c">— the source of truth</span>
+  <span class="f">start.md</span>  <span class="c">— the one entrypoint</span>
+  <span class="f">vision.md</span>  <span class="c">— why it exists</span>
+  <span class="f">architecture.md</span>  <span class="c">— glossary · data model · principles</span>
+  <span class="d">standards/</span>  <span class="c">— engineering · api-contract · develop-loop</span>
+  <span class="d">components/</span>  <span class="c">— ingestion · reading · export · feeds · settings</span>
+  <span class="d">design/</span>  <span class="c">— the look &amp; feel</span>
+<span class="d">workspace/</span>  <span class="c">— the running code · disposable, regenerated</span>
+<span class="d">old/</span>  <span class="c">— the archived first build</span></div>
+      <p class="sub rise" style="--d:.24s; max-width:60ch">Change what Feedler <span class="serif-i">is</span> here. The code is grown from it — then thrown away and regrown, better.</p>
+    </div>
+  </section>
+
+  <!-- 4C · THE FLOW (a looping core) -->
+  <section class="slide light" data-slide>
+    <div class="inner" style="text-align:center">
+      <p class="eyebrow rise">One line → a working app</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:14px">It doesn&rsquo;t run once — it loops until it&rsquo;s right.</h2>
+      <div class="flowenter rise" style="--d:.12s">you type one line&nbsp; <span class="down" style="font-size:1rem">&rarr;</span> &nbsp;<b>start.md</b> reads &amp; routes the specs&nbsp; <span class="down" style="font-size:1rem">&darr;</span></div>
+      <div class="ring rise" style="--d:.2s; height:min(360px,52vw)">
+        <svg viewBox="0 0 620 400" preserveAspectRatio="none" aria-hidden="true">
+          <defs><marker id="ah7" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#ea580c"/></marker></defs>
+          <g fill="none" stroke="#ea580c" stroke-width="3" marker-end="url(#ah7)">
+            <path d="M 388 112 Q 560 165 486 274"/>
+            <path d="M 410 344 Q 310 380 214 344"/>
+            <path d="M 134 274 Q 60 165 224 112"/>
+          </g>
+        </svg>
+        <div class="rnode" style="left:50%; top:19%"><div class="badge">1</div><div class="t">Build</div><div class="s">WHAT binding · HOW its own</div></div>
+        <div class="rnode" style="left:79%; top:80%"><div class="badge">2</div><div class="t">QA &times;4</div><div class="s">build · UI · data · time</div></div>
+        <div class="rnode" style="left:21%; top:80%"><div class="badge">3</div><div class="t">Verify</div><div class="s">independent · fresh AI</div></div>
+        <div class="rhub"><div class="sym">&#8634;</div><div class="cap">fix &amp; re-check<br>until it passes</div></div>
+      </div>
+      <div class="flowexit rise" style="--d:.5s"><span class="down" style="font-size:1rem">&darr;</span> &nbsp;<b style="color:var(--accent)">&#10003; a working app</b> — healthy on its port</div>
+      <div class="fbranch rise" style="--d:.58s; margin-top:14px"><div class="warn">&#8627; a behavior change? the <b>spec</b> changes first — your call</div></div>
+    </div>
+  </section>
+
+  <!-- 4D · THE DEVELOP LOOP (a true cycle) -->
+  <section class="slide light warm" data-slide>
+    <div class="inner" style="text-align:center">
+      <p class="eyebrow rise">develop-loop · a loop by design</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:6px">Run the build on a loop.</h2>
+      <p class="sub rise" style="--d:.1s; margin:0 auto 2px; max-width:56ch">Designing loops for AI development is the moment&rsquo;s big idea — here it&rsquo;s the default, and the name says it.</p>
+      <div class="ring rise" style="--d:.18s">
+        <svg viewBox="0 0 620 420" preserveAspectRatio="none" aria-hidden="true">
+          <defs><marker id="ah8" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#ea580c"/></marker></defs>
+          <g fill="none" stroke="#ea580c" stroke-width="3" marker-end="url(#ah8)">
+            <path d="M 388 120 Q 560 178 486 288"/>
+            <path d="M 410 362 Q 310 398 214 362"/>
+            <path d="M 134 288 Q 60 178 224 120"/>
+          </g>
+        </svg>
+        <div class="rnode" style="left:50%; top:20%"><div class="badge">1</div><div class="t">Develop</div><div class="s">fresh AI → code to spec</div></div>
+        <div class="rnode" style="left:79%; top:79%"><div class="badge">2</div><div class="t">Gate</div><div class="s">independent review, vs the spec</div></div>
+        <div class="rnode ship" style="left:21%; top:79%"><div class="badge">3</div><div class="t">Commit</div><div class="s">clean code · no credit</div></div>
+        <div class="rhub"><div class="sym">&#8635;</div><div class="cap">every round<br>a fresh AI</div></div>
+      </div>
+      <p class="rise" style="--d:.5s; margin:10px 0 0; font-family:var(--mono); font-size:clamp(.82rem,1.5vw,1.02rem); color:var(--muted-l)">exit only when <span style="color:var(--ok-l)">converged</span> &nbsp;·&nbsp; a <span class="accent-txt">spec change</span> stops it for you</p>
     </div>
   </section>
 
@@ -264,40 +405,6 @@
     </div>
   </section>
 
-  <!-- 7 · SELF-CAUGHT BUG -->
-  <section class="slide light warm" data-slide>
-    <div class="inner">
-      <p class="eyebrow rise">The moment worth showing</p>
-      <h2 class="rise" style="--d:.05s">It caught a bug in its own build.</h2>
-      <p class="sub rise" style="--d:.16s; max-width:56ch; font-size:clamp(1.05rem,2.1vw,1.55rem)">
-        The “erase everything” command — <code class="k" style="background:var(--accent-wash);color:var(--accent);font-family:var(--mono)">docker compose down -v</code> — <span class="accent-txt">didn't erase everything.</span>
-        The data lived in a folder that command can't touch. The spec promises it resets. So the AI moved the database into a proper volume and re-ran the reset until it truly hit zero.
-      </p>
-      <p class="sub rise" style="--d:.28s; color:var(--accent); font-style:italic">Nobody asked it to look.</p>
-    </div>
-  </section>
-
-  <!-- 8 · TIMEZONE NUANCE -->
-  <section class="slide light" data-slide>
-    <div class="inner">
-      <p class="eyebrow rise">Why the tests exist</p>
-      <h2 class="rise" style="--d:.05s; margin-bottom:10px">“Today” isn't the same moment everywhere.</h2>
-      <p class="sub rise" style="--d:.12s; max-width:60ch; margin-bottom:26px">One article, published <b style="color:var(--text-d)">2026-06-30 · 23:30 UTC</b>. Which day it belongs to depends on <span class="accent-txt">the reader's</span> timezone — and the export gets it right for each.</p>
-      <div class="cols">
-        <div class="tzcard rise" style="--d:.2s">
-          <div class="zone">Reader in Europe/Berlin</div>
-          <div class="day">01 Jul</div>
-          <div class="note">01:30 local — it's already tomorrow.</div>
-        </div>
-        <div class="tzcard rise" style="--d:.28s">
-          <div class="zone">Reader in UTC</div>
-          <div class="day">30 Jun</div>
-          <div class="note">23:30 local — still today.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- 9 · THE EXPORT (SHOW DON'T TELL) -->
   <section class="slide light" data-slide>
     <div class="inner">
@@ -312,21 +419,6 @@
 - **Amazon-Anthropic Deal, Meta Delays &amp; AI Cooling** (_2026-06-30 11:01_)
   — [<span class="src">source</span>](https://…/amazon-anthropic-deal) · [<span class="rdr">in reader</span>](http://localhost:8474/a/832)</div>
       <p class="sub rise" style="--d:.24s; max-width:58ch">Every item carries <span class="accent-txt">two links</span> — the original source, and a jump straight back into the reader. Self-describing, in your timezone.</p>
-    </div>
-  </section>
-
-  <!-- 10 · NUMBERS -->
-  <section class="slide light" data-slide>
-    <div class="inner">
-      <p class="eyebrow rise">The work, in numbers</p>
-      <div class="grid6" style="margin-top:20px">
-        <div class="st rise" style="--d:.10s"><div class="n">1</div><div class="l">human command</div></div>
-        <div class="st rise" style="--d:.15s"><div class="n">12</div><div class="l">spec docs read</div></div>
-        <div class="st rise" style="--d:.20s"><div class="n">17</div><div class="l">agents it ran on itself</div></div>
-        <div class="st rise" style="--d:.25s"><div class="n">8</div><div class="l">issues caught &amp; fixed</div></div>
-        <div class="st rise" style="--d:.30s"><div class="n">4</div><div class="l">layers of QA</div></div>
-        <div class="st rise" style="--d:.35s"><div class="n acc">1</div><div class="l">bug it caught in its own build</div></div>
-      </div>
     </div>
   </section>
 
