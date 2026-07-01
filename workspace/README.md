@@ -18,8 +18,10 @@ suite, then `cd workspace && docker compose up --build`.
 - **Host port:** `8474` (old + 1). `../old` keeps `:8473`.
 - **Public base URL:** `http://localhost:8474` (used for the export "in reader" deep-links).
 - **Container / image names:** distinct from the original (e.g. `feedler-new`) so both can run at once.
-- **Data:** a fresh `workspace/data/` (gitignored), re-seeded on first run from the canonical
-  `../Feeds.opml` — a clean rebuild, independent of `../old/data/` (which holds the original read state).
+- **Data:** a fresh **named Docker volume** `feedler-new-data` (not a bind mount — so
+  `docker compose down -v` actually wipes it, the spec's clean-reset path), re-seeded on first run from
+  the canonical `../Feeds.opml`. Independent of `../old/data/` (which holds the original read state).
+  Back up the DB with `docker compose cp feedler:/data/feedler.db ./feedler.db`.
 - **Everything else** per `../specs/standards/engineering_standard.md`: single Go binary, single port,
   embedded SPA, CGO-free SQLite (WAL), the env-var contract, the multi-stage Docker build.
 

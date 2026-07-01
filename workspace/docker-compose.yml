@@ -1,0 +1,38 @@
+services:
+  feedler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: feedler-new:latest
+    container_name: feedler-new
+    restart: unless-stopped
+    ports:
+      # Host 8474 → container 8473. The original (../old) keeps host :8473,
+      # so both can run side by side for comparison (see workspace/README.md).
+      - "8474:8473"
+    volumes:
+      # SQLite database + WAL files live in a NAMED volume so that
+      # `docker compose down -v` removes it and wipes all Feedler state — the
+      # documented clean-reset path (architecture §6, engineering_standard §8).
+      # A bind mount would survive `down -v` and break that lifecycle story.
+      - feedler-data:/data
+      # The seed OPML is baked into the image, but we also mount the local copy
+      # so the file on disk is the same one the container reads.
+      - ./Feeds.opml:/seed/Feeds.opml:ro
+    environment:
+      # Used to build the "in reader" deep-links in exports — must be the
+      # externally reachable URL, i.e. the published host port.
+      FEEDLER_PUBLIC_BASE_URL: "http://localhost:8474"
+      FEEDLER_REFRESH_INTERVAL_MINUTES: "30"
+    healthcheck:
+      # Runs inside the container, so it targets the in-container port 8473.
+      test: ["CMD", "wget", "-qO-", "http://localhost:8473/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  # Named so `docker compose down -v` removes it (the clean-reset path). Back up
+  # the DB with `docker compose cp feedler:/data/feedler.db ./feedler.db`.
+  feedler-data:
