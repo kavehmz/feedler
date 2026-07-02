@@ -1,0 +1,313 @@
+<svg viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define styles -->
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="orchestratorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="phaseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="verifyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="artifactGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="modificationGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Drop shadow filter -->
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1600" height="1200" fill="#0f172a"/>
+  
+  <!-- Title -->
+  <text x="800" y="40" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#ffffff">
+    🚀 AI-Driven Platform Development Process
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="800" y="70" font-family="Arial, sans-serif" font-size="18" text-anchor="middle" fill="#94a3b8">
+    8 Phases • 3 Operational Modes • Complete Verification • Intelligent Orchestration
+  </text>
+  
+  <!-- Orchestrator Box -->
+  <g id="orchestrator">
+    <rect x="600" y="100" width="400" height="80" rx="10" fill="url(#orchestratorGradient)" filter="url(#dropShadow)"/>
+    <text x="800" y="135" font-family="Arial, sans-serif" font-size="20" font-weight="bold" text-anchor="middle" fill="#ffffff">
+      🎯 ORCHESTRATOR
+    </text>
+    <text x="800" y="160" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#e9d5ff">
+      (prompts/start.md - Intelligent Routing)
+    </text>
+  </g>
+  
+  <!-- Mode Selection -->
+  <g id="modes">
+    <rect x="650" y="200" width="300" height="40" rx="20" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+    <text x="800" y="225" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">
+      📋 Modes: New | Update | Review
+    </text>
+  </g>
+  
+  <!-- Main Process Flow Container -->
+  <rect x="100" y="260" width="1400" height="820" rx="15" fill="#1e293b" fill-opacity="0.5" stroke="#334155" stroke-width="2"/>
+  
+  <!-- Phase 1: Requirements -->
+  <g id="phase1">
+    <!-- Input artifact -->
+    <rect x="150" y="300" width="140" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="220" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">📄 Product Brief</text>
+    
+    <!-- Arrow -->
+    <path d="M 290 320 L 340 320" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Phase box -->
+    <rect x="350" y="290" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="315" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">1️⃣ Requirements</text>
+    <text x="440" y="335" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Complexity Assessment</text>
+    
+    <!-- Output artifact -->
+    <path d="M 530 320 L 580 320" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="590" y="300" width="100" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="640" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">PRD.md</text>
+    
+    <!-- Verification -->
+    <rect x="380" y="370" width="120" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="390" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify</text>
+  </g>
+  
+  <!-- Phase 2: Domain Modeling -->
+  <g id="phase2">
+    <!-- Input from previous -->
+    <path d="M 440 400 L 440 430" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Phase box -->
+    <rect x="350" y="440" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="465" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">2️⃣ Domain Model</text>
+    <text x="440" y="485" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Entities &amp; Boundaries</text>
+    
+    <!-- Output artifact -->
+    <path d="M 530 470 L 580 470" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="590" y="450" width="100" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="640" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">domain.md</text>
+    
+    <!-- Verification -->
+    <rect x="380" y="520" width="120" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="540" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify</text>
+  </g>
+  
+  <!-- Phase 3: User Stories -->
+  <g id="phase3">
+    <!-- Input from previous -->
+    <path d="M 440 550 L 440 580" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Phase box -->
+    <rect x="350" y="590" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="615" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">3️⃣ User Stories</text>
+    <text x="440" y="635" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">All User Interactions</text>
+    
+    <!-- Output artifact -->
+    <path d="M 530 620 L 580 620" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="590" y="600" width="100" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="640" y="625" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">stories.md</text>
+    
+    <!-- Verification -->
+    <rect x="380" y="670" width="120" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="690" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify</text>
+  </g>
+  
+  <!-- Phase 4: Architecture -->
+  <g id="phase4">
+    <!-- Input from previous -->
+    <path d="M 440 700 L 440 730" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Phase box -->
+    <rect x="350" y="740" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="765" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">4️⃣ Architecture</text>
+    <text x="440" y="785" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Service Boundaries</text>
+    
+    <!-- Output artifact -->
+    <path d="M 530 770 L 580 770" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="590" y="750" width="100" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="640" y="775" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">arch.md</text>
+    
+    <!-- Verification -->
+    <rect x="380" y="820" width="120" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="440" y="840" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify</text>
+  </g>
+  
+  <!-- Parallel Phase 5 & 6: API and Service Specs -->
+  <g id="parallel-phases">
+    <!-- Fork indicator -->
+    <path d="M 440 850 L 440 880 L 330 880" stroke="#64748b" stroke-width="2" fill="none"/>
+    <path d="M 440 880 L 550 880" stroke="#64748b" stroke-width="2" fill="none"/>
+    
+    <!-- API Specs -->
+    <g id="phase5">
+      <rect x="240" y="900" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+      <text x="330" y="925" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">5️⃣ API Specs</text>
+      <text x="330" y="945" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Public &amp; Internal</text>
+      
+      <!-- Parallel indicator -->
+      <rect x="240" y="970" width="180" height="25" rx="12" fill="none" stroke="#22c55e" stroke-width="1"/>
+      <text x="330" y="987" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#22c55e">⚡ Can Run in Parallel</text>
+    </g>
+    
+    <!-- Service Specs -->
+    <g id="phase6">
+      <rect x="460" y="900" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+      <text x="550" y="925" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">6️⃣ Service Specs</text>
+      <text x="550" y="945" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Complete Definitions</text>
+      
+      <!-- Parallel indicator -->
+      <rect x="460" y="970" width="180" height="25" rx="12" fill="none" stroke="#22c55e" stroke-width="1"/>
+      <text x="550" y="987" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#22c55e">⚡ Can Run in Parallel</text>
+    </g>
+    
+    <!-- Join indicator -->
+    <path d="M 330 1000 L 330 1020 L 440 1020" stroke="#64748b" stroke-width="2" fill="none"/>
+    <path d="M 550 1000 L 550 1020 L 440 1020" stroke="#64748b" stroke-width="2" fill="none"/>
+    <path d="M 440 1020 L 440 1040" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  </g>
+  
+  <!-- Phase 7: Development -->
+  <g id="phase7">
+    <!-- Phase box -->
+    <rect x="850" y="290" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="940" y="315" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">7️⃣ Development</text>
+    <text x="940" y="335" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Code Implementation</text>
+    
+    <!-- Output artifact -->
+    <path d="M 1030 320 L 1080 320" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="1090" y="300" width="100" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="1140" y="325" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">code/</text>
+    
+    <!-- Verification + Review -->
+    <rect x="850" y="370" width="180" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="940" y="390" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify + 🔒 Security Review</text>
+  </g>
+  
+  <!-- Phase 8: Integration -->
+  <g id="phase8">
+    <!-- Input from development -->
+    <path d="M 940 400 L 940 430" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    
+    <!-- Phase box -->
+    <rect x="850" y="440" width="180" height="60" rx="8" fill="url(#phaseGradient)" filter="url(#dropShadow)"/>
+    <text x="940" y="465" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">8️⃣ Integration</text>
+    <text x="940" y="485" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#dbeafe">Docker Compose</text>
+    
+    <!-- Output artifact -->
+    <path d="M 1030 470 L 1080 470" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <rect x="1090" y="450" width="140" height="40" rx="5" fill="url(#artifactGradient)" filter="url(#dropShadow)"/>
+    <text x="1160" y="475" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#ffffff">docker-compose</text>
+    
+    <!-- Verification -->
+    <rect x="880" y="520" width="120" height="30" rx="15" fill="url(#verifyGradient)" filter="url(#dropShadow)"/>
+    <text x="940" y="540" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#ffffff">✓ Verify</text>
+  </g>
+  
+  <!-- Modification Router -->
+  <g id="modification-router">
+    <rect x="1200" y="600" width="220" height="80" rx="10" fill="url(#modificationGradient)" filter="url(#dropShadow)"/>
+    <text x="1310" y="630" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#ffffff">🔄 Modification Router</text>
+    <text x="1310" y="655" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#fecaca">Intelligent Change Management</text>
+    
+    <!-- Arrows showing it can affect any phase -->
+    <path d="M 1200 640 L 700 320" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 700 470" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 700 620" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 700 770" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 640 930" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 1090 320" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    <path d="M 1200 640 L 1090 470" stroke="#ef4444" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+    
+    <!-- Classification Levels -->
+    <text x="1310" y="700" font-family="Arial, sans-serif" font-size="11" text-anchor="middle" fill="#fca5a5">Level 1-8 Classification</text>
+  </g>
+  
+  <!-- Key Features Panel -->
+  <g id="features">
+    <rect x="1200" y="750" width="220" height="280" rx="10" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <text x="1310" y="780" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#ffffff">✨ Key Features</text>
+    
+    <!-- Feature list -->
+    <text x="1220" y="810" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Complexity-based PRD</text>
+    <text x="1220" y="835" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Gap Analysis Protocol</text>
+    <text x="1220" y="860" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Stateful AI Memory</text>
+    <text x="1220" y="885" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Preferences Tracking</text>
+    <text x="1220" y="910" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Surgical Modifications</text>
+    <text x="1220" y="935" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Complete Verification</text>
+    <text x="1220" y="960" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Security Reviews</text>
+    <text x="1220" y="985" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ Parallel Processing</text>
+    <text x="1220" y="1010" font-family="Arial, sans-serif" font-size="13" fill="#94a3b8">✓ 8-Phase Workflow</text>
+  </g>
+  
+  <!-- Legend -->
+  <g id="legend">
+    <text x="150" y="1120" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#ffffff">Legend:</text>
+    
+    <!-- Phase -->
+    <rect x="230" y="1105" width="60" height="20" rx="5" fill="url(#phaseGradient)"/>
+    <text x="300" y="1120" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Development Phase</text>
+    
+    <!-- Artifact -->
+    <rect x="450" y="1105" width="60" height="20" rx="5" fill="url(#artifactGradient)"/>
+    <text x="520" y="1120" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Output Artifact</text>
+    
+    <!-- Verification -->
+    <rect x="650" y="1105" width="60" height="20" rx="5" fill="url(#verifyGradient)"/>
+    <text x="720" y="1120" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Verification Step</text>
+    
+    <!-- Orchestrator -->
+    <rect x="850" y="1105" width="60" height="20" rx="5" fill="url(#orchestratorGradient)"/>
+    <text x="920" y="1120" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Orchestrator</text>
+    
+    <!-- Modification -->
+    <rect x="1050" y="1105" width="60" height="20" rx="5" fill="url(#modificationGradient)"/>
+    <text x="1120" y="1120" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Modification Router</text>
+  </g>
+  
+  <!-- Mode Descriptions -->
+  <g id="mode-descriptions">
+    <text x="150" y="1160" font-family="Arial, sans-serif" font-size="12" fill="#64748b">
+      <tspan font-weight="bold">🆕 New Mode:</tspan> Start from scratch | 
+      <tspan font-weight="bold">🔄 Update Mode:</tspan> Gap analysis &amp; evolution | 
+      <tspan font-weight="bold">📋 Review Mode:</tspan> Modify preferences with user engagement
+    </text>
+  </g>
+  
+  <!-- Flow arrows from parallel phases to development -->
+  <path d="M 700 930 L 780 930 L 780 320 L 840 320" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#64748b"/>
+    </marker>
+  </defs>
+</svg>

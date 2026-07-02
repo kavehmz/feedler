@@ -182,6 +182,31 @@
   .flowenter b,.flowexit b{ font-family:var(--serif); font-weight:700; color:var(--ink); }
   .down{ color:var(--accent-lite); font-size:1.4rem; line-height:1; }
 
+  /* ---------- architecture panels (shapes & lines) ---------- */
+  .archp{ border:1px solid var(--line-l); border-radius:16px; background:var(--card);
+    padding:clamp(12px,2vw,20px) clamp(12px,2vw,20px) clamp(10px,1.6vw,16px);
+    box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .archp.bad{ border-color:#f3c4c4; background:linear-gradient(180deg,#fff8f8,#fff); }
+  .archp.good{ border-color:#b9e4c9; background:linear-gradient(180deg,#f5fcf8,#fff); }
+  .archp svg{ width:100%; height:auto; display:block; max-height:44vh; }
+  .archtag{ font-family:var(--mono); font-size:clamp(.72rem,1.25vw,.9rem); font-weight:700;
+    letter-spacing:.09em; text-transform:uppercase; text-align:center; margin:0 0 8px; }
+  .archp.bad .archtag{ color:#dc2626; } .archp.good .archtag{ color:var(--ok-l); }
+  .archp .cap{ margin-top:8px; font-family:var(--mono); font-size:clamp(.73rem,1.3vw,.94rem);
+    line-height:1.5; color:var(--muted-l); text-align:center; }
+  .archp.bad .cap b{ color:#dc2626; } .archp.good .cap b{ color:var(--ok-l); }
+  .punch{ margin-top:24px; text-align:center; font-family:var(--mono);
+    font-size:clamp(.84rem,1.6vw,1.1rem); color:var(--muted-l); }
+  .punch b{ color:var(--accent); }
+
+  /* ---------- hero image card (spec-to-pr) ---------- */
+  .heroimg{ border:1px solid var(--line-l); border-radius:16px; background:#fff; padding:10px;
+    box-shadow:0 30px 70px -40px rgba(15,23,42,.55); }
+  .heroimg img{ width:100%; height:auto; display:block; border-radius:10px; max-height:58vh; object-fit:contain; }
+  .bloglink{ display:inline-block; margin-top:18px; font-family:var(--mono); font-size:clamp(.78rem,1.4vw,1rem);
+    color:var(--accent); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px; }
+  .bloglink:hover{ color:var(--accent-500); }
+
   /* ---------- circular loop (a true cycle) ---------- */
   .ring{ position:relative; width:min(620px,94vw); height:min(430px,60vw); margin:2px auto 0; }
   .ring > svg{ position:absolute; inset:0; width:100%; height:100%; }
@@ -247,7 +272,130 @@
     </div>
   </section>
 
-  <!-- 2 · THE COMMAND -->
+  <!-- 2 · ARCHITECTURE — shapes & lines -->
+  <section class="slide light" data-slide>
+    <div class="inner">
+      <p class="eyebrow rise">Before we write any code · architecture &amp; design</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:8px">The art of <span class="accent-txt">shapes and lines.</span></h2>
+      <p class="sub rise" style="--d:.12s; max-width:62ch; margin-bottom:20px">Shapes are the components. Lines are the dependencies — and <b>the direction of the lines</b> decides how hard every future change will be.</p>
+      <div class="cols">
+        <div class="archp bad rise" style="--d:.2s">
+          <div class="archtag">circular</div>
+          <svg viewBox="0 0 320 224" aria-hidden="true">
+            <defs><marker id="mR1" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6 Z" fill="#dc2626"/></marker></defs>
+            <g fill="none" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round" marker-end="url(#mR1)">
+              <path d="M 196 40 Q 250 58 256 92"/>
+              <path d="M 246 134 Q 226 172 198 190"/>
+              <path d="M 124 192 Q 80 182 60 136"/>
+              <path d="M 60 92 Q 74 56 122 40"/>
+              <path d="M 226 110 Q 160 96 96 110" stroke-dasharray="5 5"/>
+            </g>
+            <g font-family="ui-monospace,Menlo,monospace" font-size="14" font-weight="700" text-anchor="middle">
+              <rect x="126" y="14" width="68" height="34" rx="9" fill="#fff" stroke="#efb2b2"/><text x="160" y="36" fill="#991b1b">A</text>
+              <rect x="228" y="96" width="68" height="34" rx="9" fill="#fff" stroke="#efb2b2"/><text x="262" y="118" fill="#991b1b">B</text>
+              <rect x="126" y="176" width="68" height="34" rx="9" fill="#fff" stroke="#efb2b2"/><text x="160" y="198" fill="#991b1b">C</text>
+              <rect x="26" y="96" width="68" height="34" rx="9" fill="#fff" stroke="#efb2b2"/><text x="60" y="118" fill="#991b1b">D</text>
+            </g>
+          </svg>
+          <div class="cap">A needs B needs C… <b>back to A</b> — touch one, carry the whole ring</div>
+        </div>
+        <div class="archp good rise" style="--d:.28s">
+          <div class="archtag">layered · one-way</div>
+          <svg viewBox="0 0 320 224" aria-hidden="true">
+            <defs>
+              <marker id="mO1" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6 Z" fill="#ea580c"/></marker>
+              <marker id="mG1" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6 Z" fill="#cbd5e1"/></marker>
+            </defs>
+            <g fill="none" stroke="#ea580c" stroke-width="2.4" stroke-linecap="round" marker-end="url(#mO1)">
+              <path d="M 126 54 L 100 84"/>
+              <path d="M 194 54 L 220 84"/>
+              <path d="M 96 126 L 96 160"/>
+              <path d="M 224 126 L 224 160"/>
+              <path d="M 206 126 Q 170 150 126 160"/>
+            </g>
+            <g font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" text-anchor="middle">
+              <rect x="70" y="18" width="180" height="36" rx="10" fill="#fff3ea" stroke="#f97316"/><text x="160" y="41" fill="#c2410c">FRONTEND</text>
+              <rect x="54" y="90" width="84" height="36" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="96" y="113" fill="#334155">svc A</text>
+              <rect x="182" y="90" width="84" height="36" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="224" y="113" fill="#334155">svc B</text>
+              <rect x="54" y="164" width="84" height="36" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="96" y="187" fill="#334155">svc C</text>
+              <rect x="182" y="164" width="84" height="36" rx="10" fill="#fff" stroke="#cbd5e1"/><text x="224" y="187" fill="#334155">svc D</text>
+            </g>
+            <path d="M 300 30 L 300 186" fill="none" stroke="#cbd5e1" stroke-width="1.6" marker-end="url(#mG1)"/>
+            <text transform="rotate(90 308 60)" x="308" y="60" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#94a3b8" letter-spacing="2">SPEC ORDER</text>
+          </svg>
+          <div class="cap">lines point <b>one way</b> — spec top-down: FE first, then what it needs, then deeper</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · ARCHITECTURE — the context payoff -->
+  <section class="slide light warm" data-slide>
+    <div class="inner">
+      <p class="eyebrow rise">Why it matters more than ever</p>
+      <h2 class="rise" style="--d:.05s; margin-bottom:22px">A good shape <span class="accent-txt">shrinks the context</span> a change needs.</h2>
+      <div class="cols">
+        <div class="archp bad rise" style="--d:.16s">
+          <svg viewBox="0 0 320 224" aria-hidden="true">
+            <defs><marker id="mR2" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6 Z" fill="#dc2626"/></marker></defs>
+            <rect x="14" y="34" width="240" height="164" rx="14" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 7"/>
+            <text x="16" y="22" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#64748b" letter-spacing="1">CONTEXT WINDOW</text>
+            <text x="258" y="26" font-family="ui-monospace,Menlo,monospace" font-size="12" font-weight="700" fill="#dc2626">✗ spills</text>
+            <g fill="none" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round" marker-end="url(#mR2)">
+              <path d="M 130 70 Q 196 70 234 96"/>
+              <path d="M 268 134 Q 250 170 192 186"/>
+              <path d="M 118 190 Q 74 182 56 152"/>
+              <path d="M 58 114 Q 54 92 64 86"/>
+              <path d="M 96 86 Q 130 130 148 170" stroke-dasharray="5 5"/>
+            </g>
+            <g font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" text-anchor="middle">
+              <rect x="60" y="52" width="64" height="32" rx="9" fill="#fff" stroke="#efb2b2"/><text x="92" y="73" fill="#991b1b">A</text>
+              <rect x="236" y="98" width="64" height="32" rx="9" fill="#fff" stroke="#efb2b2"/><text x="268" y="119" fill="#991b1b">B</text>
+              <rect x="122" y="174" width="64" height="32" rx="9" fill="#fff" stroke="#efb2b2"/><text x="154" y="195" fill="#991b1b">C</text>
+              <rect x="28" y="118" width="64" height="32" rx="9" fill="#fff" stroke="#efb2b2"/><text x="60" y="139" fill="#991b1b">D</text>
+            </g>
+          </svg>
+          <div class="cap">circular: to change anything, load <b>everything</b> — it doesn't fit</div>
+        </div>
+        <div class="archp good rise" style="--d:.24s">
+          <svg viewBox="0 0 320 224" aria-hidden="true">
+            <rect x="14" y="34" width="240" height="164" rx="14" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 7"/>
+            <text x="16" y="22" font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#64748b" letter-spacing="1">CONTEXT WINDOW</text>
+            <text x="196" y="60" font-family="ui-monospace,Menlo,monospace" font-size="12" font-weight="700" fill="#16a34a">✓ fits</text>
+            <rect x="42" y="86" width="112" height="58" rx="13" fill="#fff" stroke="#16a34a" stroke-width="1.6"/>
+            <text x="98" y="112" font-family="ui-monospace,Menlo,monospace" font-size="13" font-weight="700" fill="#166534" text-anchor="middle">svc B</text>
+            <text x="98" y="130" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#4b5563" text-anchor="middle">the change</text>
+            <path d="M 156 114 L 174 114" fill="none" stroke="#94a3b8" stroke-width="1.6"/>
+            <rect x="176" y="100" width="66" height="28" rx="14" fill="#f0fbf4" stroke="#bce8cc"/>
+            <text x="209" y="118" font-family="ui-monospace,Menlo,monospace" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">contract</text>
+            <text x="134" y="182" font-family="ui-monospace,Menlo,monospace" font-size="10" fill="#b6c2d0" text-anchor="middle">…room to think</text>
+          </svg>
+          <div class="cap">modular &amp; layered: <b>one module + its contract</b> — it fits</div>
+        </div>
+      </div>
+      <p class="punch rise" style="--d:.4s">LLMs run out of context · humans run out of working memory · <b>same cure: the shape</b></p>
+      <p class="sub rise" style="--d:.5s; text-align:center; margin:12px auto 0; max-width:58ch; font-size:clamp(.92rem,1.7vw,1.2rem)">Nothing here is new — <span class="serif-i">what works for the LLM was always the best choice for humans too.</span> AI just made the bill immediate.</p>
+    </div>
+  </section>
+
+  <!-- 3B · SPEC-TO-PR (requirements → specs · solved last year) -->
+  <section class="slide light" data-slide>
+    <div class="inner">
+      <div class="cols" style="align-items:center; grid-template-columns:1fr 1.15fr">
+        <div>
+          <p class="eyebrow rise">And where do the specs come from? · solved last year</p>
+          <h2 class="rise" style="--d:.06s">Requirements in.<br><span class="accent-txt">Architecture &amp; specs out.</span></h2>
+          <p class="sub rise" style="--d:.16s; max-width:44ch">A separate project — <b>#spec-to-pr</b> — already turns product requirements into exactly this: FE &amp; BE architecture, service specs, their requirements, every detail. Today&rsquo;s story starts where it ends.</p>
+          <a class="bloglink rise" style="--d:.26s" href="https://blog.zamani.me/story-of-building-llm-developers-glimpsing-the-future" target="_blank" rel="noopener noreferrer">the story → blog.zamani.me · &ldquo;Building LLM developers&rdquo;</a>
+        </div>
+        <div class="heroimg rise" style="--d:.2s">
+          <img src="spec-to-pr-hero.svg" alt="#spec-to-pr — from product requirements to architecture and specs">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · THE COMMAND -->
   <section class="slide light" data-slide>
     <div class="inner">
       <p class="eyebrow rise">The entire human input</p>
@@ -261,7 +409,7 @@
     </div>
   </section>
 
-  <!-- 4 · THE RULE -->
+  <!-- 5 · THE RULE -->
   <section class="slide light warm" data-slide>
     <div class="inner">
       <p class="eyebrow rise">The rule it worked under</p>
@@ -270,7 +418,7 @@
     </div>
   </section>
 
-  <!-- 4A · ONE DOOR (start.md) -->
+  <!-- 6 · ONE DOOR (start.md) -->
   <section class="slide light" data-slide>
     <div class="inner">
       <p class="eyebrow rise">How a human drives it</p>
