@@ -116,7 +116,8 @@ Two type families — both **identity tokens**, replaceable:
 The Article body is set at a **comfortable reading size and generous line height** (current:
 ~18px / 1.7) and is **constrained to a reading measure of about 70 characters** (`max-width: 70ch`)
 so lines never run too long, regardless of how wide the Reading pane grows. Numeric counts (unread
-counts, "N of M", the delay readout) use **tabular figures** so they don't jitter as digits change.
+counts, "N of M", the delay readout) and the **toolbar UTC clock** (`reading_spec.md` §8.3) use
+**tabular figures** so they don't jitter as digits change.
 
 ---
 
@@ -172,6 +173,11 @@ loading), it shows a centered, muted "No articles to show. Try changing the filt
 **Loading states.** While the list is loading, the List pane header count reads `loading…` instead of
 "N of M"; the refresh control spins while a Refresh is in flight (§8); the full-article button reads
 "Fetching…" and is disabled while extraction is in flight.
+
+**Toolbar UTC clock.** The always-on UTC clock (behavior/format owned by `reading_spec.md` §8.3) sits
+at the **Toolbar's trailing (right) edge** as **muted meta text in tabular figures** — the tabular
+figures keep the ticking seconds from shifting width — legible in **both** themes. It is
+informational, never a control, and carries no accent; it reads as the quietest element on the bar.
 
 ---
 
@@ -632,6 +638,8 @@ A build conforms to this spec when:
 - [ ] Subtle custom scrollbars (translucent thumb, transparent track) in both themes. (§12)
 - [ ] Empty/loading states: no-selection placeholder (with the `?` hint), no-articles message,
       `loading…` count, "Fetching…" full-article button. (§3)
+- [ ] Toolbar UTC clock rendered as muted tabular-figure meta text at the Toolbar's trailing edge, in
+      both themes (behavior/format owned by `reading_spec.md` §8.3). (§2.4, §3)
 
 ---
 

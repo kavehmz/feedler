@@ -399,6 +399,7 @@ A single horizontal bar above the list+pane, left-to-right:
 | **Import** | opens the OPML import dialog | `feed_management_spec.md` / `ingestion_spec.md` |
 | **Theme toggle** | flips light/dark | `settings_spec.md` (owns persistence) |
 | **Settings** | opens the settings dialog | `settings_spec.md` |
+| **UTC clock** | a persistent, always-visible, **non-interactive** readout of the current date-time in **UTC**, live-updating each second (§8.3) | this spec |
 
 ### 8.1 Refresh-all flow (binding observable behavior)
 
@@ -422,6 +423,32 @@ this spec owns only the toolbar affordance and the poll-then-reload sequence.
 The toolbar's theme button flips between light and dark. **Persistence and the system-default
 behavior are owned by `settings_spec.md`** (the theme preference); this spec only states that the
 toolbar exposes a toggle and that toggling takes effect immediately.
+
+### 8.3 The UTC clock (binding)
+
+The toolbar carries a **persistent, always-visible clock** showing the current time in **UTC** — a
+non-interactive readout, never a control. It exists so the operator always has on screen the frame
+Feedler stores and reports time in: article timestamps and a feed's `last_fetched_at` are stored in
+UTC (`architecture.md` §3 invariant 5), and the export's `generated` stamp is the server's UTC
+(`export_spec.md` §6.1). A fixed UTC anchor keeps the reader **honest about state** (`vision.md` §6)
+and lets the operator reason about the export's day boundaries — which are drawn in *their own*
+timezone (`export_spec.md` §4) — against a stable reference.
+
+- **Format (binding):** the current instant rendered as the ISO-style calendar date, a single space,
+  the 24-hour time to the **second**, then the literal ` UTC` suffix — `YYYY-MM-DD HH:MM:SS UTC`.
+  **Worked example (binding):** at the instant `2026-07-02T14:23:45Z` the clock reads
+  `2026-07-02 14:23:45 UTC`.
+- **Cadence:** it updates **once per second** so the seconds tick live.
+- **Source:** it is derived from the **browser clock rendered in UTC** — no server round-trip and no
+  API call. It shows UTC regardless of the operator's local timezone or the active theme (a skewed
+  host clock shows skewed, exactly as any client clock would; this is the browser's UTC, stated
+  plainly rather than silently server-synced).
+- **Placement:** it sits at the **trailing (right) end** of the toolbar, after the settings control.
+  Because the toolbar is always on screen (it is never hidden — only the sidebar collapses,
+  `design/design_spec.md` §3.3), the clock is always visible. Its appearance (muted, tabular figures)
+  is `design/design_spec.md`'s.
+- It is **always shown** — not a tunable preference (there is no settings knob for it, so
+  `settings_spec.md` is unaffected) and not altered by the Selection, Filter, or search.
 
 ---
 
@@ -560,9 +587,12 @@ These are places where the current implementation and the spine specs are in mil
 - **Both content modes are sanitized before render and every in-content link opens in a new tab with
   `noopener` — `engineering_standard.md` §6.** (§7.5)
 - The toolbar carries: sidebar toggle, refresh-all (spinner → poll status → reload), the three
-  filter pills, search, mark-all-read, export, import, theme toggle, settings. (§8)
+  filter pills, search, mark-all-read, export, import, theme toggle, settings, and the UTC clock. (§8)
 - The refresh-all flow kicks the background refresh, polls refresh-status to completion (bounded),
   then reloads feeds + articles. (§8.1)
+- The toolbar shows a persistent UTC clock at its trailing end, formatted `YYYY-MM-DD HH:MM:SS UTC`,
+  ticking every second from the browser clock in UTC (`2026-07-02T14:23:45Z` → `2026-07-02 14:23:45
+  UTC`), always visible and non-interactive. (§8.3)
 - Every shortcut in the binding set works, is suppressed in text fields, and the `?` dialog lists the
   full set with the suppression note. (§9, §9.1)
 - The deep-link `?article=<id>` selects the article id, forces the `all` Filter, and strips the query
@@ -617,6 +647,8 @@ These are places where the current implementation and the spine specs are in mil
       §6).** (§7.5)
 - [ ] Toolbar: sidebar toggle, refresh-all (spinner → poll refresh-status → reload), filter pills,
       search, mark-all-read, export, import, theme toggle, settings. (§8)
+- [ ] Persistent toolbar UTC clock: `YYYY-MM-DD HH:MM:SS UTC`, 1-second tick, browser-derived UTC,
+      trailing end, always shown, non-interactive (worked example §8.3). (§8.3)
 - [ ] Keyboard shortcuts: `j k m s o r e / ? Shift+M Esc`, suppressed in text fields. (§9)
 - [ ] Shortcuts dialog content matches §9.1 (grouped bindings + suppression note).
 - [ ] Deep-link `?article=<id>`: set selected id, force `all` filter, strip the param; pane opens it

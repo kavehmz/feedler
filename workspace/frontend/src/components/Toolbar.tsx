@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import type { FilterKind } from '../types'
 
 interface Props {
@@ -98,7 +99,34 @@ export function Toolbar(p: Props) {
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
         </svg>
       </button>
+
+      {/* Persistent UTC clock at the trailing edge — reading_spec §8.3 */}
+      <UtcClock />
     </div>
+  )
+}
+
+// YYYY-MM-DD HH:MM:SS UTC — always UTC regardless of the browser's local zone
+// (toISOString always renders in UTC). reading_spec §8.3.
+function formatUTC(d: Date): string {
+  const iso = d.toISOString() // e.g. 2026-07-02T14:23:45.123Z
+  return `${iso.slice(0, 10)} ${iso.slice(11, 19)} UTC`
+}
+
+function UtcClock() {
+  const [now, setNow] = useState<string>(() => formatUTC(new Date()))
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(formatUTC(new Date())), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+  return (
+    <span
+      className="ml-1 shrink-0 whitespace-nowrap text-xs tabular-nums text-ink-400 dark:text-ink-500"
+      title="Current time (UTC)"
+      aria-label={`Current time ${now}`}
+    >
+      {now}
+    </span>
   )
 }
 
