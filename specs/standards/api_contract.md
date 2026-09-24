@@ -203,7 +203,7 @@ the request contract). Query params:
 
 | Param | Values | Meaning |
 |---|---|---|
-| `range` | `today` \| `yesterday` \| `week` \| `month` \| `all` \| `custom` | the time window; `week`=last 7 days, `month`=last 30 days, inclusive of today |
+| `range` | `today` \| `yesterday` \| `2days` \| `week` \| `month` \| `all` \| `custom` | the time window; `2days`=yesterday and today, `week`=last 7 days, `month`=last 30 days, inclusive of today |
 | `from`, `to` | `YYYY-MM-DD` | used when `range=custom` (or `range` empty); `to` is inclusive |
 | `tz` | IANA name (e.g. `Europe/Berlin`) or `local` | timezone for drawing day boundaries; defaults to the server's location if unparseable |
 | `filter` | `read` \| `unread` \| `starred` \| (omit = all) | read-state narrowing |

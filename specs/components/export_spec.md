@@ -47,7 +47,7 @@ Resolution rule for `tz`:
 
 The server's "now" and the start of the operator's today are both computed **in the resolved zone**: `now = current instant rendered in the zone`; `startOfToday = midnight (00:00:00) of now's calendar date in the zone`.
 
-### 4.2 The six ranges
+### 4.2 The seven ranges
 
 All windows are **half-open** intervals `[from, to)` — `from` inclusive, `to` exclusive — except where a custom `to` is made inclusive by extending it (§4.3). The article timestamp compared is **published-else-fetched** (`COALESCE(published_at, fetched_at)` — `architecture.md` §3 invariant 4), matching the list ordering.
 
@@ -55,12 +55,13 @@ All windows are **half-open** intervals `[from, to)` — `from` inclusive, `to` 
 |---|---|---|---|
 | `today` | `startOfToday` | `startOfToday + 24h` | the operator's current calendar day |
 | `yesterday` | `startOfToday − 24h` | `startOfToday` | the operator's previous calendar day |
+| `2days` | `startOfToday − 24h` | `startOfToday + 24h` | **yesterday and today together** (last 2 days including today) |
 | `week` | `startOfToday − 6 days` | `startOfToday + 24h` | **last 7 days including today** |
 | `month` | `startOfToday − 29 days` | `startOfToday + 24h` | **last 30 days including today** |
 | `all` | *(none)* | *(none)* | no time bounds; every article in Scope |
 | `custom` | parsed `from` (§4.3) | parsed `to`, made inclusive (§4.3) | an explicit operator-chosen window |
 
-`week` spans 7 calendar days and `month` spans 30 because both run from a back-dated start of day up to the end of today (`startOfToday + 24h`). An empty/absent `range` is treated as `custom` (so bare `from`/`to` still work).
+`2days` spans yesterday plus today, `week` spans 7 calendar days, and `month` spans 30 — each runs from a back-dated start of day up to the end of today (`startOfToday + 24h`). An empty/absent `range` is treated as `custom` (so bare `from`/`to` still work).
 
 ### 4.3 Custom range parsing
 
@@ -257,12 +258,12 @@ The dialog is a modal the operator opens to build and preview a Digest. Its appe
 
 ### 7.1 Controls
 
-When the dialog opens its defaults are: Range = **Today**, Read state = **All**, Group by = **By folder / feed**, **Include summary excerpt** = on; Scope is seeded from the current **Selection** (so it is *not* fixed to All). The custom from/to pickers start empty and are hidden until Range = Custom.
+When the dialog opens its defaults are: Range = **Today & yesterday** (`2days`), Read state = **Unread**, Group by = **By folder / feed**, **Include summary excerpt** = on; Scope is seeded from the current **Selection** (so it is *not* fixed to All). The custom from/to pickers start empty and are hidden until Range = Custom. The Range and Read-state defaults serve the most common export — open the dialog, copy, done — which is "what arrived today and yesterday that I have not read", with no control-fiddling required.
 
 | Control | Behavior |
 |---|---|
 | **Scope** select | Seeded from the current **Selection** when the dialog opens. Options, in order: **All articles**; **Starred only**; then **one option per Folder** (labelled with the folder name and its feed count); then **one option per Feed** (labelled with the feed title, visually nested under its folder). Choosing a folder sets `folder=`; choosing a feed sets `feed=`; "Starred only" sets the starred coupling (§5.3). |
-| **Date range** select | The six Ranges (§4.2): Today, Yesterday, Last 7 days, Last 30 days, All time, Custom. When **Custom** is chosen, two `YYYY-MM-DD` date pickers (**from**, **to**) appear; otherwise they are hidden. A small note states which **timezone** the day boundaries use — the **browser's resolved IANA zone** — shown literally (§4.1, §7.4). |
+| **Date range** select | The seven Ranges (§4.2), in this order: Today, Yesterday, Today & yesterday, Last 7 days, Last 30 days, All time, Custom. When **Custom** is chosen, two `YYYY-MM-DD` date pickers (**from**, **to**) appear; otherwise they are hidden. A small note states which **timezone** the day boundaries use — the **browser's resolved IANA zone** — shown literally (§4.1, §7.4). |
 | **Read state** select | The four Filter values (All, Read, Unread, Starred — §5.2). When Scope is **Starred only**, this control is **pinned to "starred" and disabled** (§5.3), reflecting that the export is already starred-only. |
 | **Group by** select | "By folder / feed" (`group=feed`) or "Chronological" (`group=chrono`) — §6.2/§6.3. |
 | **Include summary excerpt** checkbox | On by default; unchecking sends `body=0` so the Body is omitted (§6.4). |
@@ -316,7 +317,7 @@ These are places where the current implementation and the spine specs may diverg
 - [ ] `GET /api/export` returns `text/markdown; charset=utf-8` (`api_contract.md` §6) whose body begins with `# Reads — <range label>` and the `_<n> articles · filter: … · generated <RFC3339>_` meta line (§6.1).
 - [ ] The Range label is `all time` (unbounded), `<from> → <to-1day-inclusive>` (both bounds), `since <from>` (lower only), or `until <to>` (upper only) — exactly as §6.1 (matches the binding example).
 - [ ] `today`/`yesterday`/`week`/`month` windows are computed in the operator's `tz`; the §4.4 "Berlin vs UTC" worked example holds (an item at 2026-06-30T23:30:00Z lands on a different local day for the two operators).
-- [ ] `week` = last 7 days incl. today; `month` = last 30 days incl. today; `all` = unbounded; `custom` `to` is inclusive of its whole day (§4.2, §4.3).
+- [ ] `2days` = yesterday + today; `week` = last 7 days incl. today; `month` = last 30 days incl. today; `all` = unbounded; `custom` `to` is inclusive of its whole day (§4.2, §4.3).
 - [ ] An unparseable `tz` falls back to the server location; a bad custom date is ignored; both produce a valid Digest, never a 5xx (§4.1, §4.3, §9).
 - [ ] Scope mirrors the Selection: All / Starred / one folder / one feed; "Starred only" forces the starred Filter (§5.1, §5.3).
 - [ ] Filter `read`/`unread`/`starred`/all narrows correctly and is echoed in the header meta line (§5.2, §6.1).
@@ -326,7 +327,7 @@ These are places where the current implementation and the spine specs may diverg
 - [ ] The `(_date_)` (by-feed) / leading `<date> · ` (chrono) is omitted when the article has no published date (§6.2, §6.3).
 - [ ] The Body is an indented `  > ` blockquote of the Summary, falling back to Content-as-Markdown truncated to ~1200 chars with `…`; omitted when `body=0` or when the resolved Body is empty (§6.4).
 - [ ] Titles escape `* _ [ ]`; the `⭐ ` prefix appears only when starred and is added after escaping (§6.5; matches the binding example).
-- [ ] The dialog seeds Scope from the Selection, offers All/Starred/every folder/every feed, shows custom date pickers only for `custom`, pins+disables read-state under Starred scope, and shows the browser's timezone (§7).
+- [ ] The dialog seeds Scope from the Selection, opens with Range = Today & yesterday and Read state = Unread, offers All/Starred/every folder/every feed, shows custom date pickers only for `custom`, pins+disables read-state under Starred scope, and shows the browser's timezone (§7).
 - [ ] The live preview re-fetches on every option change, the latest selection wins over stale fetches, Copy copies the preview text, and Download adds `disposition=attachment` yielding `feedler-<YYYY-MM-DD>.md` (§7.1, §7.2).
 - [ ] The article count shown by the dialog is read from the preview header's `<n> articles` (§7.1).
 - [ ] Esc (and a backdrop click) close the dialog (§7.3).
@@ -334,7 +335,7 @@ These are places where the current implementation and the spine specs may diverg
 
 ## Deliverables checklist
 
-- [ ] Range/timezone engine: resolve `tz` (IANA | `local` | fallback), compute `startOfToday` in-zone, derive the six windows as half-open `[from, to)` intervals (§4).
+- [ ] Range/timezone engine: resolve `tz` (IANA | `local` | fallback), compute `startOfToday` in-zone, derive the seven windows as half-open `[from, to)` intervals (§4).
 - [ ] Custom-range parser: `YYYY-MM-DD` from/to, `to` made inclusive (+24h), bad dates ignored (§4.3).
 - [ ] Query layer: apply Scope (`folder`/`feed`), Filter (read/unread/starred/all), and the published-else-fetched time bounds, ordered newest-first (§5, §6.7).
 - [ ] Header writer: `# Reads — <range label>` + the meta line with count, filter, RFC3339 timestamp, and the four range-label cases (§6.1).

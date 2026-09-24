@@ -58,7 +58,7 @@ provider.
 | **Conditional GET** | A refresh that sends `If-None-Match` / `If-Modified-Since` from the feed's stored `etag` / `last_modified`, so unchanged feeds return `304` and cost nothing. |
 | **Scope** | An export's source narrowing: all articles, starred only, one folder, or one feed. Mirrors the sidebar **Selection**. |
 | **Selection** | What the sidebar has chosen as the current view: All, Starred, a Folder, or a Feed. Drives the article list and seeds the export Scope. |
-| **Range** | An export's time window: today, yesterday, last 7 days, last 30 days, all time, or a custom from/to — with day boundaries drawn in the **operator's timezone**. |
+| **Range** | An export's time window: today, yesterday, today & yesterday, last 7 days, last 30 days, all time, or a custom from/to — with day boundaries drawn in the **operator's timezone**. |
 | **Filter** | The read-state narrowing of the article list or export: unread / all / starred / read. |
 | **Seed** | The one-time first-run import of the bundled OPML file. |
 | **Meta** | The `meta` key/value table for small bits of server state (e.g. the `seeded` flag). |

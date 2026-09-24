@@ -206,6 +206,22 @@ func TestWindow_NamedRange_DSTMidnight(t *testing.T) {
 	}
 }
 
+// `2days` = yesterday and today together (export_spec §4.2): from yesterday's
+// local midnight up to the end of today.
+func TestWindow_TwoDays(t *testing.T) {
+	now := time.Date(2026, 8, 19, 12, 0, 0, 0, time.UTC)
+	from, to := Window("2days", "", "", time.UTC, now)
+	if from == nil || to == nil {
+		t.Fatal("2days returned nil bounds")
+	}
+	if want := time.Date(2026, 8, 18, 0, 0, 0, 0, time.UTC); !from.Equal(want) {
+		t.Errorf("2days lower bound = %s, want %s", from, want)
+	}
+	if want := time.Date(2026, 8, 20, 0, 0, 0, 0, time.UTC); !to.Equal(want) {
+		t.Errorf("2days upper bound = %s, want %s", to, want)
+	}
+}
+
 var countRe = regexp.MustCompile(`_(\d+) articles`)
 
 func headerCount(t *testing.T, digest string) int {

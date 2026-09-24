@@ -8,7 +8,7 @@ interface Props {
   selection: Selection
 }
 
-type RangeKey = 'today' | 'yesterday' | 'week' | 'month' | 'all' | 'custom'
+type RangeKey = 'today' | 'yesterday' | '2days' | 'week' | 'month' | 'all' | 'custom'
 type ScopeKey =
   | { kind: 'all' }
   | { kind: 'starred' }
@@ -37,8 +37,8 @@ function scopeId(s: ScopeKey): string {
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 
 export function ExportDialog({ onClose, feeds, selection }: Props) {
-  const [range, setRange] = useState<RangeKey>('today')
-  const [filter, setFilter] = useState('all')
+  const [range, setRange] = useState<RangeKey>('2days')
+  const [filter, setFilter] = useState('unread')
   const [group, setGroup] = useState<'feed' | 'chrono'>('feed')
   const [withBody, setWithBody] = useState(true)
   const [from, setFrom] = useState('')
@@ -154,6 +154,7 @@ export function ExportDialog({ onClose, feeds, selection }: Props) {
               <Select value={range} onChange={v => setRange(v as RangeKey)}>
                 <option value="today">Today</option>
                 <option value="yesterday">Yesterday</option>
+                <option value="2days">Today &amp; yesterday</option>
                 <option value="week">Last 7 days</option>
                 <option value="month">Last 30 days</option>
                 <option value="all">All time</option>

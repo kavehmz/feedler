@@ -25,6 +25,7 @@ func ResolveTZ(tz string) *time.Location {
 //
 //   - today      → [startOfToday, startOfToday+24h)
 //   - yesterday  → [startOfToday-24h, startOfToday)
+//   - 2days      → [startOfToday-24h, startOfToday+24h)  (yesterday and today)
 //   - week       → [startOfToday-6d, startOfToday+24h)   (last 7 days incl. today)
 //   - month      → [startOfToday-29d, startOfToday+24h)  (last 30 days incl. today)
 //   - all        → (nil, nil)
@@ -46,6 +47,10 @@ func Window(rng, from, to string, loc *time.Location, now time.Time) (fromT, toT
 	case "yesterday":
 		f := startOfToday.AddDate(0, 0, -1)
 		t := startOfToday
+		return &f, &t
+	case "2days":
+		f := startOfToday.AddDate(0, 0, -1)
+		t := startOfToday.AddDate(0, 0, 1)
 		return &f, &t
 	case "week":
 		f := startOfToday.AddDate(0, 0, -6)
