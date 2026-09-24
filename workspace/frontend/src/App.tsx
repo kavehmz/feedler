@@ -11,16 +11,32 @@ import { SettingsDialog } from './components/SettingsDialog'
 import { ShortcutsDialog } from './components/ShortcutsDialog'
 import { useSettings } from './settings'
 
+// Deep link: the BE redirects /a/{id} to /?article={id} (api_contract §7).
+function readDeepLinkId(): number | null {
+  const a = new URL(window.location.href).searchParams.get('article')
+  if (!a) return null
+  const id = parseInt(a, 10)
+  return Number.isNaN(id) ? null : id
+}
+
 export function App() {
   const [settings, updateSettings, resetSettings] = useSettings()
+  const [deepLinkId] = useState(readDeepLinkId)
   const [feeds, setFeeds] = useState<FeedsResponse | null>(null)
   const [selection, setSelection] = useState<Selection>({ kind: 'all' })
-  const [filter, setFilter] = useState<FilterKind>(settings.defaultFilter)
+  // A deep-link overrides defaultFilter with `all` for this load (reading_spec §10).
+  const [filter, setFilter] = useState<FilterKind>(deepLinkId != null ? 'all' : settings.defaultFilter)
   const [search, setSearch] = useState('')
   const [articles, setArticles] = useState<Article[]>([])
   const [total, setTotal] = useState(0)
   const [loadingArticles, setLoadingArticles] = useState(false)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [selectedId, setSelectedId] = useState<number | null>(deepLinkId)
+  // The deep-linked article's own record, so the pane can open it even when it
+  // is older than the loaded list page (reading_spec §7.2).
+  const [deepLinked, setDeepLinked] = useState<Article | null>(null)
+  // The first feeds/list load waits for the deep-link read-mark, so neither
+  // comes back with the article still unread.
+  const [deepLinkPending, setDeepLinkPending] = useState(deepLinkId != null)
   const [refreshing, setRefreshing] = useState(false)
   const [exportOpen, setExportOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
@@ -60,24 +76,35 @@ export function App() {
     }
   }, [filter, search, selection])
 
-  useEffect(() => { loadFeeds() }, [loadFeeds])
-  useEffect(() => { loadArticles() }, [loadArticles])
+  useEffect(() => { if (!deepLinkPending) loadFeeds() }, [loadFeeds, deepLinkPending])
+  useEffect(() => { if (!deepLinkPending) loadArticles() }, [loadArticles, deepLinkPending])
 
-  // Deep link: /a/{id} → ?article=id  (the BE redirects /a/123 to /?article=123)
+  // Deep link: open the article from its own record, mark it read like any
+  // open, and clean the URL (reading_spec §10).
   useEffect(() => {
+    if (deepLinkId == null) return
     const u = new URL(window.location.href)
-    const a = u.searchParams.get('article')
-    if (a) {
-      const id = parseInt(a, 10)
-      if (!Number.isNaN(id)) {
-        setSelectedId(id)
-        setFilter('all')
-        // Clean the URL
-        u.searchParams.delete('article')
-        window.history.replaceState({}, '', u.pathname + (u.search || ''))
+    u.searchParams.delete('article')
+    window.history.replaceState({}, '', u.pathname + (u.search || ''))
+    ;(async () => {
+      try {
+        const a = await api.getArticle(deepLinkId)
+        setDeepLinked(a)
+        if (!a.is_read) {
+          try {
+            await api.markRead(a.id)
+            setDeepLinked(prev => prev && prev.id === a.id ? { ...prev, is_read: true } : prev)
+          } catch (e) { console.error('mark read failed', e) }
+        }
+      } catch (e) {
+        // No such article (e.g. its feed was removed): the pane stays empty.
+        console.error('deep-link article not found', e)
+        setSelectedId(null)
+      } finally {
+        setDeepLinkPending(false)
       }
-    }
-  }, [])
+    })()
+  }, [deepLinkId])
 
   const onSelectArticle = useCallback(async (a: Article) => {
     // Selection is instant; the read-state flip + count refresh follow the read
@@ -122,6 +149,7 @@ export function App() {
   const handleStar = useCallback(async (id: number) => {
     const r = await api.toggleStar(id)
     setArticles(prev => prev.map(x => x.id === id ? { ...x, is_starred: r.is_starred } : x))
+    setDeepLinked(prev => prev && prev.id === id ? { ...prev, is_starred: r.is_starred } : prev)
   }, [])
 
   const handleToggleRead = useCallback(async (id: number, currentlyRead: boolean) => {
@@ -129,6 +157,7 @@ export function App() {
       if (currentlyRead) await api.markUnread(id)
       else await api.markRead(id)
       setArticles(prev => prev.map(x => x.id === id ? { ...x, is_read: !currentlyRead } : x))
+      setDeepLinked(prev => prev && prev.id === id ? { ...prev, is_read: !currentlyRead } : prev)
       loadFeeds()
     } catch (e) { console.error('toggle read failed', e) }
   }, [loadFeeds])
@@ -142,6 +171,13 @@ export function App() {
     await loadArticles()
     await loadFeeds()
   }, [selection, loadArticles, loadFeeds])
+
+  // The pane's subject: the loaded row, else the deep-linked record (reading_spec §7.2).
+  const selectedArticle = useMemo(
+    () => articles.find(a => a.id === selectedId)
+      || (deepLinked && deepLinked.id === selectedId ? deepLinked : null),
+    [articles, selectedId, deepLinked],
+  )
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -167,13 +203,11 @@ export function App() {
         // Shift+M — mark all in current scope as read
         e.preventDefault()
         handleMarkAllRead()
-      } else if (e.key === 'm' && selectedId != null) {
+      } else if (e.key === 'm' && selectedArticle) {
         e.preventDefault()
-        const a = articles.find(x => x.id === selectedId)
-        if (a) handleToggleRead(a.id, a.is_read)
-      } else if (e.key === 'o' && selectedId != null) {
-        const a = articles.find(x => x.id === selectedId)
-        if (a?.link) window.open(a.link, '_blank', 'noopener,noreferrer')
+        handleToggleRead(selectedArticle.id, selectedArticle.is_read)
+      } else if (e.key === 'o' && selectedArticle) {
+        if (selectedArticle.link) window.open(selectedArticle.link, '_blank', 'noopener,noreferrer')
       } else if (e.key === 'e') {
         e.preventDefault()
         setExportOpen(true)
@@ -187,12 +221,7 @@ export function App() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [articles, selectedId, onSelectArticle, handleRefreshAll, handleStar, handleToggleRead, handleMarkAllRead])
-
-  const selectedArticle = useMemo(
-    () => articles.find(a => a.id === selectedId) || null,
-    [articles, selectedId],
-  )
+  }, [articles, selectedId, selectedArticle, onSelectArticle, handleRefreshAll, handleStar, handleToggleRead, handleMarkAllRead])
 
   return (
     <div className="flex h-full w-full overflow-hidden">
@@ -200,7 +229,7 @@ export function App() {
         <Sidebar
           feeds={feeds}
           selection={selection}
-          onSelect={(s) => { setSelection(s); setSelectedId(null) }}
+          onSelect={(s) => { setSelection(s); setSelectedId(null); setDeepLinked(null) }}
           onChanged={async () => { await loadFeeds(); await loadArticles() }}
         />
       )}

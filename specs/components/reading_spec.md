@@ -325,12 +325,18 @@ lightweight row it already has; once it arrives the fuller record is used.
 **On switching to a different article**, the pane **resets to Feed-content mode** (§7.3) and
 discards any previously fetched Full content / error before loading the new record.
 
-**Selection that resolves to no loaded row keeps the pane empty (binding).** Because the pane's
-subject is resolved against the loaded list, a selected article id that is **not present in the
-current list page** leaves the pane in its empty state (§7.1) — the pane does not fetch a record for
-an id that has no row in the list. This is the case the **Deep-link** must contend with (§10): a
-deep-linked article only opens in the pane when its row is in the loaded list under the forced `all`
-Filter; otherwise the pane stays empty until the operator navigates to a Selection that surfaces it.
+**A selected article with no loaded row still opens (binding).** The list holds one page (§2), so a
+**Deep-link** (§10) can select an article whose row is **not in the loaded list**. The pane then opens
+that article from its single-article record (`GET /api/articles/{id}`) alone — it does not depend on
+the list page. In that case:
+
+- no list row is highlighted, and the list is otherwise unchanged;
+- the pane's header, both content modes (§7.3), and its read/unread and star controls (§7.4) work
+  exactly as for a listed article, and reflect every change the operator makes;
+- `m`, `s`, and `o` (§9) act on the open article; `j`/`k` treat it as "no row selected" and start
+  at the top of the list (§9);
+- if the record cannot be loaded (e.g. `404` because its feed was removed), the pane stays in its
+  empty state (§7.1) and the reader otherwise loads normally.
 
 ### 7.3 The header and the two-way content toggle
 
@@ -500,27 +506,28 @@ operator's reference — `vision.md` values an honest, learnable surface):
 The backend redirects `GET /a/{id}` → `302` to `/?article={id}` (`api_contract.md` §7). On SPA load
 the reader inspects the URL for an `?article=<id>` query parameter, and if present and numeric:
 
-1. **selects that article** — sets it as the selected id so the pane resolves to it **if its row is in
-   the loaded list** (§7.2; see the binding limitation below);
-2. **switches the Filter to `all`** so the target is findable even if it is already Read (an
-   exported, already-read article must still open);
-3. **strips the `article` query parameter from the URL** (a history replace), so a reload or a copied
+1. **lands on the All Selection** with the **Filter set to `all`** — so the list around the article
+   is predictable, and an already-Read article's row is not filtered out. This overrides the
+   `defaultFilter` setting for that load (`settings_spec.md` §2);
+2. **opens that article in the pane, whether or not its row is in the loaded list** (§7.2). The
+   list holds only the newest page (§2), and an exported article is often older than that page, so
+   the pane must never depend on the list to open a deep-linked article;
+3. **marks it Read if it is Unread**, exactly as opening it from the list does (§5.1): it calls
+   `POST /api/articles/{id}/read`, then shows it as Read in the pane (and in its list row, if the row
+   is loaded), then reloads the feeds endpoint so the unread counts drop. Following an "in reader"
+   link is reading the article; it must not come back in the next Unread export;
+4. **strips the `article` query parameter from the URL** (a history replace), so a reload or a copied
    URL is clean.
 
-This is how an exported "in reader" link (`export_spec.md`) lands the operator on the right article.
-A non-numeric or absent `article` param is ignored (normal load).
+This is how an exported "in reader" link (`export_spec.md`) lands the operator on the right article,
+however old it is. A non-numeric or absent `article` param is ignored (normal load). A numeric id
+with no article behind it leaves the pane empty (§7.2).
 
-**Binding limitation (current behavior).** The deep-link does **not** change the Selection (it stays
-the default **All**) and forces only the Filter to `all`; it does **not** fetch the target article
-independently of the list. The pane therefore opens the deep-linked article **only when that article
-is among the loaded `all`/All list page** (§2 — the list requests one generous page, not the whole
-archive). A deep-link to an older article that falls outside the loaded page resolves to no row, so
-the pane stays in its empty state (§7.2) until the operator surfaces it. This gap is recorded in §11.2;
-a stricter behavior (reset the Selection to All *and* fetch the target directly) is a spec change.
-
-**Binding example:** opening `/a/4501` → the browser is redirected to `/?article=4501` → the reader
-sets the Filter to `all` and selects article `4501`; if `4501` is in the loaded All list page the pane
-opens it, and the address bar is rewritten to `/`.
+**Binding example:** opening `/a/4501`, where `4501` is Unread and older than the newest list page →
+the browser is redirected to `/?article=4501` → the reader shows the All Selection under the `all`
+Filter, the pane opens article `4501` (no list row is highlighted), the article is marked Read, the
+`Unread (N)` count drops by one, and the address bar is rewritten to `/`. Opening `/a/4501` again
+opens it the same way and leaves counts unchanged (it is already Read).
 
 ---
 
@@ -536,17 +543,7 @@ These are places where the current implementation and the spine specs are in mil
    is always whole-app from a non-feed/non-folder view), (b) add a scope to `api_contract.md` §5, or
    (c) disable mark-all-read while Starred is selected. **Spec change required to alter behavior** —
    left as documented current behavior.
-2. **Deep-link target may not be in the loaded list — and then the pane stays empty.** §10 sets the
-   selected id and forces the `all` Filter but does **not** change the Selection and does **not** fetch
-   the target independently of the list. The pane's subject is the selected id resolved against the
-   loaded list page (§7.2), so if the deep-linked article is **outside** the loaded `all`/All page
-   (e.g. an older exported article past the page boundary, or one in a feed the current Selection
-   excludes), it resolves to **no row** and the pane shows its **empty state** — the article does *not*
-   open. `j`/`k` also behave as if nothing is selected. This is the current behavior and it is a real
-   shortfall for the export's "in reader" link (`export_spec.md`), whose whole point is landing on an
-   older read article. A conformant fix (reset the Selection to **All** *and* fetch the single-article
-   record directly so the pane opens regardless of the list page) is a **spec change**; left as
-   documented current behavior, not silently reconciled.
+2. *(Closed — the Deep-link now opens articles outside the loaded list page, §7.2, §10.)*
 3. **The mark-all-read confirmation wording says "visible"** while the action marks the whole scope
    (including rows beyond the current page). The behavior (mark the scope) is the binding one; the
    wording should not imply "only what is on screen". Treated as copy to tighten, not a behavior
@@ -595,9 +592,12 @@ These are places where the current implementation and the spine specs are in mil
   UTC`), always visible and non-interactive. (§8.3)
 - Every shortcut in the binding set works, is suppressed in text fields, and the `?` dialog lists the
   full set with the suppression note. (§9, §9.1)
-- The deep-link `?article=<id>` selects the article id, forces the `all` Filter, and strips the query
-  param; the pane opens the article when its row is in the loaded All list page, and otherwise stays in
-  its empty state (the documented current limitation). (§10, §11.2)
+- The deep-link `?article=<id>` lands on All under the `all` Filter, opens the article in the pane
+  **even when it is outside the loaded list page** (no row highlighted), marks it Read if Unread and
+  reloads counts, and strips the query param; an id with no article leaves the pane empty. The §10
+  binding example holds. (§7.2, §10)
+- An article opened with no loaded row supports the pane's read/unread and star controls and the
+  `m`/`s`/`o` shortcuts; `j`/`k` start at the top of the list. (§7.2)
 
 ## 13. Risk & failure considerations
 
@@ -651,6 +651,7 @@ These are places where the current implementation and the spine specs are in mil
       trailing end, always shown, non-interactive (worked example §8.3). (§8.3)
 - [ ] Keyboard shortcuts: `j k m s o r e / ? Shift+M Esc`, suppressed in text fields. (§9)
 - [ ] Shortcuts dialog content matches §9.1 (grouped bindings + suppression note).
-- [ ] Deep-link `?article=<id>`: set selected id, force `all` filter, strip the param; pane opens it
-      only when its row is in the loaded list page (documented limitation §11.2). (§10)
+- [ ] Deep-link `?article=<id>`: All Selection + `all` filter, open the article from its own record
+      whether or not its row is loaded, mark it Read (open-marks-read), strip the param; unknown id →
+      empty pane. (§7.2, §10)
 - [ ] Open questions (§11) carried as documented current behavior, not silently changed.
